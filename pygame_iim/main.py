@@ -1,6 +1,7 @@
 import pygame
 from operator import add
 from game_objects import *
+import time
 
 
 def fit_bg_dims(game_dims, bg_path):
@@ -10,7 +11,6 @@ def fit_bg_dims(game_dims, bg_path):
 
 
 def game_setup(game_dims, game_name, icon_path, bg_path):
-
     screen = pygame.display.set_mode(game_dims)
     pygame.display.set_caption(game_name)
     icon = pygame.image.load(icon_path)
@@ -52,8 +52,9 @@ def move_player(delts, speed, down=True):
 
 pygame.init()
 game_size = (800, 600)
-core_screen, main_menu = game_setup(game_size, 'Tomidos project', 'game_images/monster.png', 'game_images/main_menu.png')
-player_img = pygame.image.load('game_images/player/hm_player_core.png')
+core_screen, main_menu = game_setup(game_size, 'Tomidos project', 'game_assets/monster.png',
+                                    'game_assets/main_menu.png')
+player_img = pygame.image.load('game_assets/player/hm_player_core.png')
 player_img = pygame.transform.smoothscale(player_img, (161, 107))
 player_coords = [370, 480]
 
@@ -61,12 +62,14 @@ player_coords = [370, 480]
 running = True
 deltas = [0, 0]
 buttons = pygame.sprite.Group()
-play_button = Animated_Sprite('game_images/play_button', 1, 400, 200, (215, 162))
-quit_button = Animated_Sprite('game_images/quit_button', 1, 400, 400, (215, 162))
+play_button = Button('game_assets/play_button', 1, 400, 200, (215, 162),
+                     sound_path='game_assets/sounds/button_click.wav')
+quit_button = Button('game_assets/quit_button', 1, 400, 400, (215, 162),
+                     sound_path='game_assets/sounds/button_click.wav')
 buttons.add(play_button)
 buttons.add(quit_button)
 
-level_0 = fit_bg_dims(game_size, 'game_images/hm_bg.png')
+level_0 = fit_bg_dims(game_size, 'game_assets/hm_bg.png')
 curr_screen = main_menu
 
 while running:
@@ -81,18 +84,21 @@ while running:
             move_player(deltas, 1, down=False)
         if event.type == pygame.MOUSEMOTION:
             if play_button.coll_check(event.pos):
-                play_button.set_pressed()
+                play_button.set_hovered()
             else:
                 play_button.set_released()
             if quit_button.coll_check(event.pos):
-                quit_button.set_pressed()
+                quit_button.set_hovered()
             else:
                 quit_button.set_released()
 
         if event.type == pygame.MOUSEBUTTONDOWN:
             if quit_button.coll_check(event.pos) and curr_screen == main_menu:
+                quit_button.sound.play()
+                time.sleep(0.3)
                 running = False
             elif play_button.coll_check(event.pos) and curr_screen == main_menu:
+                play_button.sound.play()
                 curr_screen = level_0
 
     player_coords = list(map(add, player_coords, deltas))  # should be time efficient
