@@ -1,5 +1,4 @@
 import pygame
-from operator import add
 from game_objects import *
 import time
 
@@ -23,36 +22,22 @@ def player_up(h_screen, p_img, p_coords):
 
 
 def border_check(game_dims, p_coords, player_size):
+    temp = list(p_coords)
     if p_coords[0] <= 0:
-        p_coords[0] = 0
+        temp[0] = 0
     elif p_coords[0] >= game_dims[0] - player_size:
-        p_coords[0] = game_dims[0] - player_size
+        temp[0] = game_dims[0] - player_size
     if p_coords[1] <= 0:
-        p_coords[1] = 0
+        temp[1] = 0
     elif p_coords[1] >= game_dims[1] - player_size:
-        p_coords[1] = game_dims[1] - player_size
+        temp[1] = game_dims[1] - player_size
+    p_coords = tuple(temp)
+    return p_coords
 
-
-def move_player(delts, speed, down=True):
-    if down:
-        if event.key == pygame.K_a:
-            delts[0] -= speed
-        if event.key == pygame.K_d:
-            delts[0] += speed
-        if event.key == pygame.K_w:
-            delts[1] -= speed
-        if event.key == pygame.K_s:
-            delts[1] += speed
-    else:
-        if event.key == pygame.K_a or event.key == pygame.K_d:
-            delts[0] = 0
-        if event.key == pygame.K_w or event.key == pygame.K_s:
-            delts[1] = 0
-    
 
 pygame.init()
 game_size = (800, 600)
-core_screen, main_menu = game_setup(game_size, 'Tomidos project', 'game_assets/monster.png',
+core_surface, main_menu = game_setup(game_size, 'Tomidos project', 'game_assets/monster.png',
                                     'game_assets/main_menu.png')
 player_img = pygame.image.load('game_assets/player/hm_player_core.png')
 player_img = pygame.transform.smoothscale(player_img, (161, 107))
@@ -63,7 +48,7 @@ running = True
 deltas = [0, 0]
 buttons = pygame.sprite.Group()
 characters = pygame.sprite.Group()
-player = Player('game_assets/player', 0, 370, 480, (161, 107), img_format='PNG')
+player = Player('game_assets/player', 0, 370, 480, (161, 107), 1, img_format='PNG')
 play_button = Button('game_assets/play_button', 1, 400, 200, (215, 162),
                      sound_path='game_assets/sounds/button_click.wav')
 quit_button = Button('game_assets/quit_button', 1, 400, 400, (215, 162),
@@ -75,19 +60,21 @@ characters.add(player)
 
 level_0 = fit_bg_dims(game_size, 'game_assets/hm_bg.png')
 curr_screen = main_menu
-
+clock = pygame.time.Clock()
 while running:
-    core_screen.blit(curr_screen, (0, 0))
+    core_surface.blit(curr_screen, (0, 0))
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
         if event.type == pygame.KEYDOWN:
-            move_player(deltas, 1)
+            player.update_delts(event)
+
             if event.key == pygame.K_ESCAPE:
                 curr_screen = main_menu
         if event.type == pygame.KEYUP:
-            move_player(deltas, 1, down=False)
+            player.update_delts(event, down=False)
+
         if event.type == pygame.MOUSEMOTION:
             if play_button.coll_check(event.pos):
                 play_button.set_hovered()
@@ -107,15 +94,17 @@ while running:
                 play_button.sound.play()
                 curr_screen = level_0
 
-    player_coords = list(map(add, player_coords, deltas))  # should be time efficient
-    border_check(game_size, player_coords, 32)
+    player.move_player()
+    player.rect.center = border_check(game_size, player.rect.center, 32) # Cant do it like that rn, is a tuple
     if curr_screen == level_0:
-        #characters.draw(core_screen)
-        #characters.update()
-        player_up(core_screen, player_img, player_coords)
+        characters.draw(core_surface)
+        characters.update()
+
     if curr_screen == main_menu:
-        buttons.draw(core_screen)
+        buttons.draw(core_surface)
         buttons.update()
+    clock.tick()
+    #print(clock.get_fps())
 
     pygame.display.update()  # TODO bad for perfomance, should keep a list of objects(rects/sprites) that are updated and only update them
 

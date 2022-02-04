@@ -1,7 +1,7 @@
 import pygame
 import glob
 from PIL import Image, ImageOps
-
+from operator import add
 
 # TODO - Npc and Player classes
 # Toggle between them as the right direction key is pressed.
@@ -55,16 +55,19 @@ class Button(Animated_Sprite):
 
 
 class Player(Animated_Sprite):
-    def __init__(self, animation_path, animation_speed, pos_x, pos_y, game_size, step_sound_path=None, img_format='png'):
+    def __init__(self, animation_path, animation_speed, pos_x, pos_y, game_size, move_speed, step_sound_path=None, img_format='png'):
         super().__init__(animation_path, animation_speed, pos_x, pos_y, game_size, img_format)
         self.key_dir_pressed = [False, False]
         self.key_dir_released = [False, False]
+        self.deltas = [0, 0]
+        self.curr_dir = 0
         if step_sound_path:
             self.sound = pygame.mixer.Sound(step_sound_path)
         self.flipped_sprites = []
+        self.player_speed = move_speed
         for f in glob.glob(animation_path + '/*.' + img_format):
             image = Image.open(f)
-            image = ImageOps.flip(image)
+            image = ImageOps.mirror(image)
             mode = image.mode
             size = image.size
             data = image.tobytes()
@@ -76,17 +79,17 @@ class Player(Animated_Sprite):
         self.key_dir_pressed[dir_idx] = True
         self.key_dir_released[dir_idx] = False
 
-    def set_released(self, dir_idx):
-        self.key_dir_pressed[dir_idx] = True
-        self.key_dir_released[dir_idx] = False
+    def set_released(self):
+        self.key_dir_pressed = [False, False]
+        self.key_dir_released = [True, True]
 
     def update(self):
-        last = 0
-        if self.key_dir_pressed:
+
+        if any(self.key_dir_pressed):
             if self.key_dir_pressed[0]:
-                last = 0
+                self.curr_dir = 0  # Right
             else:
-                last = 1
+                self.curr_dir = 1  # Left
             self.current_sprite += self.speed
 
             if self.current_sprite >= len(self.sprites):
@@ -95,24 +98,29 @@ class Player(Animated_Sprite):
         if self.key_dir_released:
             self.current_sprite = 0
 
-        if last:
+        if self.curr_dir:
             self.image = self.flipped_sprites[int(self.current_sprite)]
         else:
             self.image = self.sprites[int(self.current_sprite)]
-    #TODO - do move player
 
-    def move_player(self, event, delts, speed, down=True):
+    def update_delts(self, event, down=True):
         if down:
             if event.key == pygame.K_a:
-                delts[0] -= speed
+                self.deltas[0] -= self.player_speed
+                self.set_pressed(1)
             if event.key == pygame.K_d:
-                delts[0] += speed
+                self.deltas[0] += self.player_speed
+                self.set_pressed(0)
             if event.key == pygame.K_w:
-                delts[1] -= speed
+                self.deltas[1] -= self.player_speed
             if event.key == pygame.K_s:
-                delts[1] += speed
+                self.deltas[1] += self.player_speed
         else:
             if event.key == pygame.K_a or event.key == pygame.K_d:
-                delts[0] = 0
+                self.deltas[0] = 0
+                self.set_released()
             if event.key == pygame.K_w or event.key == pygame.K_s:
-                delts[1] = 0
+                self.deltas[1] = 0
+
+    def move_player(self):
+        self.rect.center = list(map(add, list(self.rect.center), self.deltas))
