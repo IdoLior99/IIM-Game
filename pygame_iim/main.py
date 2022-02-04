@@ -18,7 +18,7 @@ def game_setup(game_dims, game_name, icon_path, bg_path):
     return screen, fit_bg_dims(game_dims, bg_path)
 
 
-def player(h_screen, p_img, p_coords):
+def player_up(h_screen, p_img, p_coords):
     h_screen.blit(p_img, p_coords)
 
 
@@ -48,7 +48,7 @@ def move_player(delts, speed, down=True):
             delts[0] = 0
         if event.key == pygame.K_w or event.key == pygame.K_s:
             delts[1] = 0
-
+    
 
 pygame.init()
 game_size = (800, 600)
@@ -62,12 +62,16 @@ player_coords = [370, 480]
 running = True
 deltas = [0, 0]
 buttons = pygame.sprite.Group()
+characters = pygame.sprite.Group()
+player = Player('game_assets/player', 0, 370, 480, (161, 107), img_format='PNG')
 play_button = Button('game_assets/play_button', 1, 400, 200, (215, 162),
                      sound_path='game_assets/sounds/button_click.wav')
 quit_button = Button('game_assets/quit_button', 1, 400, 400, (215, 162),
                      sound_path='game_assets/sounds/button_click.wav')
+
 buttons.add(play_button)
 buttons.add(quit_button)
+characters.add(player)
 
 level_0 = fit_bg_dims(game_size, 'game_assets/hm_bg.png')
 curr_screen = main_menu
@@ -80,6 +84,8 @@ while running:
             running = False
         if event.type == pygame.KEYDOWN:
             move_player(deltas, 1)
+            if event.key == pygame.K_ESCAPE:
+                curr_screen = main_menu
         if event.type == pygame.KEYUP:
             move_player(deltas, 1, down=False)
         if event.type == pygame.MOUSEMOTION:
@@ -104,9 +110,12 @@ while running:
     player_coords = list(map(add, player_coords, deltas))  # should be time efficient
     border_check(game_size, player_coords, 32)
     if curr_screen == level_0:
-        player(core_screen, player_img, player_coords)
+        #characters.draw(core_screen)
+        #characters.update()
+        player_up(core_screen, player_img, player_coords)
     if curr_screen == main_menu:
         buttons.draw(core_screen)
         buttons.update()
 
     pygame.display.update()  # TODO bad for perfomance, should keep a list of objects(rects/sprites) that are updated and only update them
+
