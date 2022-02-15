@@ -2,6 +2,9 @@ import pygame
 import glob
 from PIL import Image, ImageOps
 from operator import add
+import time
+import math
+
 
 # TODO - Npc and Player classes
 # Toggle between them as the right direction key is pressed.
@@ -55,7 +58,8 @@ class Button(Animated_Sprite):
 
 
 class Player(Animated_Sprite):
-    def __init__(self, animation_path, animation_speed, pos_x, pos_y, game_size, move_speed, step_sound_path=None, img_format='png'):
+    def __init__(self, animation_path, animation_speed, pos_x, pos_y, game_size, move_speed, step_sound_path=None,
+                 img_format='png'):
         super().__init__(animation_path, animation_speed, pos_x, pos_y, game_size, img_format)
         self.key_dir_pressed = [False, False]
         self.key_dir_released = [False, False]
@@ -124,3 +128,48 @@ class Player(Animated_Sprite):
 
     def move_player(self):
         self.rect.center = list(map(add, list(self.rect.center), self.deltas))
+
+
+class NPC(Animated_Sprite):
+    def __init__(self, animation_path, animation_speed, pos_x, pos_y, game_size, move_speed, loc_offset,
+                 step_sound_path=None, img_format='png'):
+        super().__init__(animation_path, animation_speed, pos_x, pos_y, game_size, img_format)
+        self.key_dir_pressed = [False, False]
+        self.key_dir_released = [False, False]
+        self.deltas = [0, 0]
+        self.curr_dir = 0
+        if step_sound_path:
+            self.sound = pygame.mixer.Sound(step_sound_path)
+        self.flipped_sprites = []
+        self.move_speed = move_speed
+        for f in glob.glob(animation_path + '/*.' + img_format):
+            image = Image.open(f)
+            image = ImageOps.mirror(image)
+            mode = image.mode
+            size = image.size
+            data = image.tobytes()
+            img = pygame.image.fromstring(data, size, mode)
+            img = pygame.transform.smoothscale(img, game_size)
+            self.flipped_sprites.append(img)
+        self.dx, self.dy = 0, 0
+        self.rect.center = [pos_x + loc_offset, pos_y + loc_offset]
+
+    def move_towards_player(self, player):
+        self.dx, self.dy = player.rect.center[0] - self.rect.center[0], player.rect.center[1] - self.rect.center[1]
+        if abs(self.dx) >= 70 or abs(self.dy) >= 70:
+            dist = math.dist(player.rect.center, self.rect.center)
+            self.dx, self.dy = self.dx / dist, self.dy / dist  # Normalize
+            self.deltas[0] += self.dx * self.move_speed
+            self.deltas[1] += self.dy * self.move_speed
+        self.rect.center = list(map(add, list(self.rect.center), self.deltas))
+        self.deltas = [0, 0]
+
+    def update(self):
+        if self.dx < 0:
+            self.curr_dir = 1
+        else:
+            self.curr_dir = 0
+        if self.curr_dir:
+            self.image = self.flipped_sprites[int(self.current_sprite)]
+        else:
+            self.image = self.sprites[int(self.current_sprite)]

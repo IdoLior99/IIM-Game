@@ -10,7 +10,7 @@ def fit_bg_dims(game_dims, bg_path):
 
 
 def game_setup(game_dims, game_name, icon_path, bg_path):
-    screen = pygame.display.set_mode(game_dims)
+    screen = pygame.display.set_mode(game_dims) # add pygame.FULLSCREEN if fullscreen
     pygame.display.set_caption(game_name)
     icon = pygame.image.load(icon_path)
     pygame.display.set_icon(icon)
@@ -49,6 +49,7 @@ deltas = [0, 0]
 buttons = pygame.sprite.Group()
 characters = pygame.sprite.Group()
 player = Player('game_assets/player', 0, 370, 480, (161, 107), 1, img_format='PNG')
+npc = NPC('game_assets/skully', 0, 370, 480, (48, 54), 1, loc_offset=100, img_format='PNG')
 play_button = Button('game_assets/play_button', 1, 400, 200, (215, 162),
                      sound_path='game_assets/sounds/button_click.wav')
 quit_button = Button('game_assets/quit_button', 1, 400, 400, (215, 162),
@@ -56,11 +57,13 @@ quit_button = Button('game_assets/quit_button', 1, 400, 400, (215, 162),
 
 buttons.add(play_button)
 buttons.add(quit_button)
+characters.add(npc)
 characters.add(player)
 
 level_0 = fit_bg_dims(game_size, 'game_assets/hm_bg.png')
 curr_screen = main_menu
 clock = pygame.time.Clock()
+#TODO add default anchor points for player - npc spawn locations.
 while running:
     core_surface.blit(curr_screen, (0, 0))
 
@@ -69,7 +72,6 @@ while running:
             running = False
         if event.type == pygame.KEYDOWN:
             player.update_delts(event)
-
             if event.key == pygame.K_ESCAPE:
                 curr_screen = main_menu
         if event.type == pygame.KEYUP:
@@ -95,7 +97,9 @@ while running:
                 curr_screen = level_0
 
     player.move_player()
-    player.rect.center = border_check(game_size, player.rect.center, 32) # Cant do it like that rn, is a tuple
+    npc.move_towards_player(player)
+    player.rect.center = border_check(game_size, player.rect.center, 32)
+    npc.rect.center = border_check(game_size, npc.rect.center, 32)
     if curr_screen == level_0:
         characters.draw(core_surface)
         characters.update()
