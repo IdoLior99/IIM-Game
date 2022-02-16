@@ -4,6 +4,7 @@ from PIL import Image, ImageOps
 from operator import add
 import time
 import math
+from os import listdir
 
 
 # TODO - Npc and Player classes
@@ -28,6 +29,7 @@ class Animated_Sprite(pygame.sprite.Sprite):
 class Button(Animated_Sprite):
     def __init__(self, animation_path, animation_speed, pos_x, pos_y, game_size, sound_path=None, img_format='png'):
         super().__init__(animation_path, animation_speed, pos_x, pos_y, game_size, img_format)
+        self.button_size = game_size
         self.key_pressed = False
         self.key_released = False
         if sound_path:
@@ -53,8 +55,10 @@ class Button(Animated_Sprite):
         self.image = self.sprites[int(self.current_sprite)]
 
     def coll_check(self, event_pos):
-        return (event_pos[0] in range(self.rect.center[0] - 100, self.rect.center[0] + 100)) and \
-               (event_pos[1] in range(self.rect.center[1] - 50, self.rect.center[1] + 50))
+        return (event_pos[0] in range(self.rect.center[0] - self.button_size[0] // 2,
+                                      self.rect.center[0] + self.button_size[0] // 2)) and \
+               (event_pos[1] in range(self.rect.center[1] - self.button_size[1] // 2,
+                                      self.rect.center[1] + self.button_size[1] // 2))
 
 
 class Player(Animated_Sprite):
@@ -161,8 +165,9 @@ class NPC(Animated_Sprite):
             self.dx, self.dy = self.dx / dist, self.dy / dist  # Normalize
             self.deltas[0] += self.dx * self.move_speed
             self.deltas[1] += self.dy * self.move_speed
+        else:
+            self.deltas = [0, 0]
         self.rect.center = list(map(add, list(self.rect.center), self.deltas))
-        self.deltas = [0, 0]
 
     def update(self):
         if self.dx < 0:
@@ -173,3 +178,19 @@ class NPC(Animated_Sprite):
             self.image = self.flipped_sprites[int(self.current_sprite)]
         else:
             self.image = self.sprites[int(self.current_sprite)]
+
+
+class Msg_Button(Button):
+    def __init__(self, animation_path, animation_speed, pos_x, pos_y, game_size, y_offset, npc: NPC, sound_path=None,
+                 img_format='png'):
+        super().__init__(animation_path, animation_speed, pos_x, pos_y, game_size, sound_path, img_format)
+        rect_center = [npc.rect.center[0], npc.rect.center[1] + y_offset]
+        self.rect.center = rect_center
+        self.npc = npc
+        self.y_offset = y_offset
+
+    def update(self):
+        super().update()
+        self.image = self.sprites[int(self.current_sprite)]
+        rect_center = [self.npc.rect.center[0], self.npc.rect.center[1] + self.y_offset]
+        self.rect.center = rect_center
