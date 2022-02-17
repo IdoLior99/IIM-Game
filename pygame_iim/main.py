@@ -68,7 +68,8 @@ clock = pygame.time.Clock()
 # TODO add default anchor points for player - npc spawn locations.
 text_box_flag = False
 text_i = 0
-texts = ['hello world', 'woopie doopie poo']
+hint_text = "Press k to interact with close objects!"
+hover_time = 0
 while running:
 
     core_surface.blit(curr_screen, (0, 0))
@@ -76,12 +77,35 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        if not text_box_flag and event.type == pygame.KEYDOWN:
-            player.update_delts(event)
-            if event.key == pygame.K_ESCAPE:
-                curr_screen = main_menu
-        if not text_box_flag and event.type == pygame.KEYUP:
-            player.update_delts(event, down=False)
+        if event.type == pygame.KEYDOWN:
+            if not text_box_flag:
+                player.update_delts(event)
+            if curr_screen == level_0:
+                if event.key == pygame.K_ESCAPE:
+                    curr_screen = main_menu
+                if event.key == pygame.K_k:
+                    if not text_box_flag and msg_button.coll_check(player.rect.center, x_offset=50, y_offset=80):
+                        msg_button.set_hovered()
+                        msg_button.sound.play()
+                        text_box_flag = True
+                        msg_texts = textfont.render(npc.texts[text_i], 1, (0, 0, 0))
+                    elif text_box_flag:
+                        next_button.set_hovered()
+                        if not hover_time:
+                            hover_time = time.time()
+                        next_button.sound.play()
+                        text_i += 1
+                        if text_i >= len(npc.texts):
+                            text_box_flag = False
+                            game_sprites.remove(msg_button)
+                        else:
+                            msg_texts = textfont.render(npc.texts[text_i], 1, (0, 0, 0))
+
+        if event.type == pygame.KEYUP:
+            if not text_box_flag:
+                player.update_delts(event, down=False)
+            if event.key == pygame.K_k:
+                next_button.set_released()
 
         if event.type == pygame.MOUSEMOTION:
             for button in menu_sprites:
@@ -90,17 +114,12 @@ while running:
                 else:
                     button.set_released()
 
-            if msg_button.coll_check(event.pos):
-                msg_button.set_hovered()
-            else:
-                msg_button.set_released()
-
             if text_box_flag and next_button.coll_check(event.pos):
                 next_button.set_hovered()
             else:
                 next_button.set_released()
 
-        if event.type == pygame.MOUSEBUTTONDOWN:
+        if event.type == pygame.MOUSEBUTTONDOWN and curr_screen == main_menu:
             if quit_button.coll_check(event.pos) and curr_screen == main_menu:
                 quit_button.sound.play()
                 time.sleep(0.3)
@@ -109,20 +128,6 @@ while running:
                 play_button.sound.play()
                 start_time = time.time()
                 curr_screen = level_0
-            elif msg_button.coll_check(event.pos) and curr_screen == level_0:
-                msg_button.sound.play()
-                text_box_flag = True
-                text1 = textfont.render(texts[text_i], 1, (0, 0, 0))
-                game_sprites.remove(msg_button)
-
-            if next_button.coll_check(event.pos) and curr_screen == level_0:
-                next_button.sound.play()
-                text_i += 1
-                if text_i >= len(texts):
-                    text_box_flag = False
-                else:
-                    text1 = textfont.render(texts[text_i], 1, (0, 0, 0))
-
 
     player.move_player()
     npc.move_towards_player(player)
@@ -133,7 +138,7 @@ while running:
         game_sprites.update()
         if text_box_flag:
             core_surface.blit(text_window, (0, 300))
-            core_surface.blit(text1, (75, 440))
+            core_surface.blit(msg_texts, (75, 440))
             text_sprites.draw(core_surface)
             text_sprites.update()
 
@@ -141,6 +146,6 @@ while running:
         menu_sprites.draw(core_surface)
         menu_sprites.update()
     clock.tick()
-    #print(clock.get_fps())
+    # print(clock.get_fps())
 
     pygame.display.update()  # TODO bad for perfomance, should keep a list of objects(rects/sprites) that are updated and only update them

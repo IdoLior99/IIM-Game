@@ -5,7 +5,12 @@ from operator import add
 import time
 import math
 from os import listdir
-
+# Defined at the beginning, used according to each npc type
+MESSAGE_NUM = 1
+TALK_OPTIM_TEXTS = ['hello world :)', 'woopie doopie poo :D']
+QUIET_OPTIM_TEXTS = ['hey :)', 'yay! :D']
+TALK_PESSIM_TEXTS = ['hello perish now', 'kill thy self']
+QUIET_PESSIM_TEXTS = ['hey die', 'kys']
 
 # TODO - Npc and Player classes
 # Toggle between them as the right direction key is pressed.
@@ -54,11 +59,11 @@ class Button(Animated_Sprite):
             self.current_sprite = 0
         self.image = self.sprites[int(self.current_sprite)]
 
-    def coll_check(self, event_pos):
-        return (event_pos[0] in range(self.rect.center[0] - self.button_size[0] // 2,
-                                      self.rect.center[0] + self.button_size[0] // 2)) and \
+    def coll_check(self, event_pos, x_offset=0, y_offset=0):
+        return (event_pos[0] in range(self.rect.center[0] - self.button_size[0] // 2-x_offset,
+                                      self.rect.center[0] + self.button_size[0] // 2+x_offset)) and \
                (event_pos[1] in range(self.rect.center[1] - self.button_size[1] // 2,
-                                      self.rect.center[1] + self.button_size[1] // 2))
+                                      self.rect.center[1] + self.button_size[1] // 2+y_offset))
 
 
 class Player(Animated_Sprite):
@@ -136,12 +141,16 @@ class Player(Animated_Sprite):
 
 class NPC(Animated_Sprite):
     def __init__(self, animation_path, animation_speed, pos_x, pos_y, game_size, move_speed, loc_offset,
-                 step_sound_path=None, img_format='png'):
+                 step_sound_path=None, img_format='png', inter=1, talk=0, optimism=1, type='default'):
         super().__init__(animation_path, animation_speed, pos_x, pos_y, game_size, img_format)
         self.key_dir_pressed = [False, False]
         self.key_dir_released = [False, False]
         self.deltas = [0, 0]
         self.curr_dir = 0
+        # TODO both of these should depend on the npc type
+        self.texts = ['hello world', 'woopie doopie poo']
+        self.message_num = 1
+        ###
         if step_sound_path:
             self.sound = pygame.mixer.Sound(step_sound_path)
         self.flipped_sprites = []
