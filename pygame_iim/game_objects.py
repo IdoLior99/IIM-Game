@@ -11,6 +11,7 @@ TALK_OPTIM_TEXTS = ['hello world :)', 'woopie doopie poo :D']
 QUIET_OPTIM_TEXTS = ['hey :)', 'yay! :D']
 TALK_PESSIM_TEXTS = ['hello perish now', 'kill thy self']
 QUIET_PESSIM_TEXTS = ['hey die', 'kys']
+POSSIBLE_MSG_MATRIX = [[TALK_OPTIM_TEXTS, QUIET_OPTIM_TEXTS], [TALK_PESSIM_TEXTS, QUIET_PESSIM_TEXTS]]
 
 # TODO - Npc and Player classes
 # Toggle between them as the right direction key is pressed.
@@ -148,7 +149,7 @@ class NPC(Animated_Sprite):
         self.deltas = [0, 0]
         self.curr_dir = 0
         # TODO both of these should depend on the npc type
-        self.texts = ['hello world', 'woopie doopie poo']
+        self.texts = POSSIBLE_MSG_MATRIX[optimism][talk]
         self.message_num = 1
         ###
         if step_sound_path:
