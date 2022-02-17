@@ -13,6 +13,13 @@ TALK_PESSIM_TEXTS = ['hello perish now', 'kill thy self']
 QUIET_PESSIM_TEXTS = ['hey die', 'kys']
 POSSIBLE_MSG_MATRIX = [[TALK_OPTIM_TEXTS, QUIET_OPTIM_TEXTS], [TALK_PESSIM_TEXTS, QUIET_PESSIM_TEXTS]]
 
+CORRECT = {'Princess': {'Candy', 'Fruit'},
+           'Robot': {'Candy', 'Money'},
+           'Farmer': {'Fruit', 'Money'},
+           'Cookie Monster': {'Candy'},
+           'Tooth': {'Fruit'},
+           'Businessman': {'Money'},
+           'Ghost': {'Candy', 'Fruit'}}
 # TODO - Npc and Player classes
 # Toggle between them as the right direction key is pressed.
 # In case of an animated button - define the 'sensitive zone'? and find a way to get the button's coordinates.
@@ -33,11 +40,12 @@ class Animated_Sprite(pygame.sprite.Sprite):
 
 
 class Button(Animated_Sprite):
-    def __init__(self, animation_path, animation_speed, pos_x, pos_y, game_size, sound_path=None, img_format='png'):
+    def __init__(self, animation_path, animation_speed, pos_x, pos_y, game_size, sound_path=None, img_format='png', tag='none'):
         super().__init__(animation_path, animation_speed, pos_x, pos_y, game_size, img_format)
         self.button_size = game_size
         self.key_pressed = False
         self.key_released = False
+        self.tag = tag
         if sound_path:
             self.sound = pygame.mixer.Sound(sound_path)
 
@@ -204,3 +212,37 @@ class Msg_Button(Button):
         self.image = self.sprites[int(self.current_sprite)]
         rect_center = [self.npc.rect.center[0], self.npc.rect.center[1] + self.y_offset]
         self.rect.center = rect_center
+
+class Enemy:
+    def __init__(self, enemy_pic, pos_x, pos_y, game_size, title, img_format='png'):
+        f = enemy_pic + '.' + img_format
+        img = pygame.image.load(f)
+        self.image = pygame.transform.smoothscale(img, game_size)
+        self.rect = self.image.get_rect()
+        self.rect.center = [pos_x, pos_y]
+        self.title = title
+        self.correct_answers = CORRECT[title]
+
+    def get_enemy(self):
+        return self
+
+    # TODO: implement if necessary
+    def deploy(self):
+        pass
+
+
+class Outcome:
+    def __init__(self, V_sound_path, X_sound_path):
+        self.right = False
+        self.right_sound = pygame.mixer.Sound(V_sound_path)
+        self.wrong_sound = pygame.mixer.Sound(X_sound_path)
+        self.sound = None
+
+    def check_choice(self, choice, curr_enemy):
+        if choice:
+            if choice in curr_enemy.correct_answers:
+                self.right = True
+                self.sound = self.right_sound
+            else:
+                self.right = False
+                self.sound = self.wrong_sound
