@@ -36,6 +36,10 @@ def border_check(game_dims, p_coords, player_size):
     p_coords = tuple(temp)
     return p_coords
 
+# TODO this------------->
+#def button_collision(button,player_size):
+
+
 ################################################# CREATE ENEMIES #######################################################
 
 # TODO: use For loop
@@ -95,22 +99,25 @@ msg_button = Msg_Button('game_assets/msg_button', 1, 400, 200, (100, 75), npc=np
 text_sprites = pygame.sprite.Group()
 next_button = Button('game_assets/next_button', 1, 720, 540, (107, 81),
                      sound_path='game_assets/sounds/button_click.wav')
-game_sprites.add([msg_button, npc, player])
-text_sprites.add([next_button])
-
-lvl_buttons = pygame.sprite.Group()
-candy_button = Button('game_assets/quit_button', 1, 100, 400, (215, 162),
-                     sound_path='game_assets/sounds/button_click.wav')
-fruit_button = Button('game_assets/quit_button', 1, 300, 400, (215, 162),
-                     sound_path='game_assets/sounds/button_click.wav')
-money_button = Button('game_assets/quit_button', 1, 500, 400, (215, 162),
-                     sound_path='game_assets/sounds/button_click.wav')
-trick_button = Button('game_assets/quit_button', 1, 700, 400, (215, 162),
-                     sound_path='game_assets/sounds/button_click.wav')
 door_button = Button('game_assets/quit_button', 1, 600, 150, (160, 200),
                      sound_path='game_assets/sounds/button_click.wav')
-lvl_buttons.add([candy_button, fruit_button, money_button, trick_button, door_button])
-lvl_buttons_list = [candy_button, fruit_button, money_button, trick_button, door_button]
+
+# TODO add enemy sprites and what not
+game_sprites.add([door_button, msg_button, npc, player])
+text_sprites.add([next_button])
+
+tool_sprites = pygame.sprite.Group()
+candy_button = Button('game_assets/quit_button', 1, 100, 200, (112, 81),
+                     sound_path='game_assets/sounds/button_click.wav', tag='candy')
+fruit_button = Button('game_assets/quit_button', 1, 300, 400, (112, 81),
+                     sound_path='game_assets/sounds/button_click.wav', tag='fruit')
+money_button = Button('game_assets/quit_button', 1, 500, 600, (112, 81),
+                     sound_path='game_assets/sounds/button_click.wav', tag='money')
+trick_button = Button('game_assets/quit_button', 1, 600, 400, (112, 81),
+                     sound_path='game_assets/sounds/button_click.wav', tag='trick')
+# Door button is excluded from here
+tool_sprites.add([candy_button, fruit_button, money_button, trick_button])
+
 
 # Game Answer outcome
 outcome = Outcome(X_sound_path='game_assets/sounds/button_click.wav',
@@ -164,7 +171,7 @@ while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-            for button in lvl_buttons_list:
+            for button in tool_sprites:
                 if button.coll_check(player.rect.center):
                     button.set_hovered()
                 else:
@@ -193,9 +200,12 @@ while running:
                                 game_sprites.remove(msg_button)
                             else:
                                 msg_texts = textfont.render(npc.texts[text_i], 1, (0, 0, 0))
-                        if not door_mode:
-                            pass #pickup stuff
-
+                        elif door_mode:
+                            for button in tool_sprites:
+                                if button.coll_check(player.rect.center):
+                                    button.sound.play()
+                                    choice = button.tag
+                                    print(choice)
 
             if event.type == pygame.KEYUP:
                 if not text_box_flag:
@@ -215,6 +225,8 @@ while running:
         npc.rect.center = border_check(game_size, npc.rect.center, 32)
         game_sprites.draw(core_surface)
         game_sprites.update()
+        tool_sprites.draw(core_surface)
+        tool_sprites.update()
         if text_box_flag:
             core_surface.blit(text_window, (0, 300))
             core_surface.blit(msg_texts, (75, 440))
