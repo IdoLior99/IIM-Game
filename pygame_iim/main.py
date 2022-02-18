@@ -78,7 +78,7 @@ hint_text = "Press k to interact with close objects!"
 hover_time = 0
 lvl = 0
 choice = None
-door_mode = True
+door_open = True
 running = True
 
 # Game Enemies
@@ -90,6 +90,21 @@ MAX_LVL = 10
 #            all_enemies[11], all_enemies[13], all_enemies[3], all_enemies[9]]  # TODO: in len MAX_LVL
 
 ################################################# SCREENS ##########################################################
+# Main Menu Screen:
+menu_sprites = pygame.sprite.Group()
+play_button = Button('game_assets/play_button', 1, 400, 200, (215, 162),
+                     sound_path='game_assets/sounds/button_click.wav')
+quit_button = Button('game_assets/quit_button', 1, 400, 400, (215, 162),
+                     sound_path='game_assets/sounds/button_click.wav')
+menu_sprites.add([play_button, quit_button])
+
+# Finish Screen:
+finish_screen = fit_bg_dims(game_size, 'game_assets/hm_bg.png')
+finish_buttons = pygame.sprite.Group()
+finish_button = Button('game_assets/quit_button', 1, 400, 300, (215, 162),
+                     sound_path='game_assets/sounds/button_click.wav')
+finish_buttons.add(finish_button)
+
 # Game Screen:
 game_sprites = pygame.sprite.Group()
 player = Player('game_assets/player', 0, 370, 480, (161, 107), 1, img_format='PNG')
@@ -108,41 +123,26 @@ text_sprites.add([next_button])
 
 tool_sprites = pygame.sprite.Group()
 candy_button = Button('game_assets/quit_button', 1, 100, 200, (112, 81),
-                     sound_path='game_assets/sounds/button_click.wav', tag='candy')
+                     sound_path='game_assets/sounds/candy_sound.wav', tag='candy')
 fruit_button = Button('game_assets/quit_button', 1, 300, 400, (112, 81),
                      sound_path='game_assets/sounds/button_click.wav', tag='fruit')
 money_button = Button('game_assets/quit_button', 1, 500, 600, (112, 81),
-                     sound_path='game_assets/sounds/button_click.wav', tag='money')
+                     sound_path='game_assets/sounds/money_sound.wav', tag='money')
 trick_button = Button('game_assets/quit_button', 1, 600, 400, (112, 81),
                      sound_path='game_assets/sounds/button_click.wav', tag='trick')
 # Door button is excluded from here
 tool_sprites.add([candy_button, fruit_button, money_button, trick_button])
 
-
 # Game Answer outcome
 outcome = Outcome(X_sound_path='game_assets/sounds/button_click.wav',
                   V_sound_path='game_assets/sounds/button_click.wav')
 
-# Main Menu Screen:
-menu_sprites = pygame.sprite.Group()
-play_button = Button('game_assets/play_button', 1, 400, 200, (215, 162),
-                     sound_path='game_assets/sounds/button_click.wav')
-quit_button = Button('game_assets/quit_button', 1, 400, 400, (215, 162),
-                     sound_path='game_assets/sounds/button_click.wav')
-menu_sprites.add([play_button, quit_button])
 
-# Finish Screen:
-finish_screen = fit_bg_dims(game_size, 'game_assets/hm_bg.png')
-finish_buttons = pygame.sprite.Group()
-finish_button = Button('game_assets/quit_button', 1, 400, 300, (215, 162),
-                     sound_path='game_assets/sounds/button_click.wav')
-finish_buttons.add(finish_button)
-
+#door change = False and then if change has happened, load next npc message.
+start_time = time.time()
 ################################################# GAME LOOP #########################################################
 while running:
     core_surface.blit(curr_screen, (0, 0))
-    start_time = time.time()
-
     # Main Menu Stuff
     if curr_screen == main_menu:
         for event in pygame.event.get():
@@ -182,7 +182,7 @@ while running:
                 if curr_screen == level_0:
                     if event.key == pygame.K_ESCAPE:
                         curr_screen = main_menu
-                    if event.key == pygame.K_k:
+                    if event.key == pygame.K_l:
                         if not text_box_flag and msg_button in game_sprites and \
                                 msg_button.coll_check(player.rect.center, x_offset=50, y_offset=80):
                             msg_button.set_hovered()
@@ -200,7 +200,9 @@ while running:
                                 game_sprites.remove(msg_button)
                             else:
                                 msg_texts = textfont.render(npc.texts[text_i], 1, (0, 0, 0))
-                        elif door_mode:
+
+                    if event.key == pygame.K_k:
+                        if door_open:
                             for button in tool_sprites:
                                 if button.coll_check(player.rect.center):
                                     button.sound.play()
@@ -210,13 +212,7 @@ while running:
             if event.type == pygame.KEYUP:
                 if not text_box_flag:
                     player.update_delts(event, down=False)
-                if event.key == pygame.K_k:
-                    next_button.set_released()
-
-            if event.type == pygame.MOUSEMOTION:
-                if text_box_flag and next_button.coll_check(event.pos):
-                    next_button.set_hovered()
-                else:
+                if event.key == pygame.K_l:
                     next_button.set_released()
 
         player.move_player()
