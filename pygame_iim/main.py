@@ -75,6 +75,7 @@ clock = pygame.time.Clock()
 text_box_flag = False
 text_i = 0
 hint_text = "Press k to interact with close objects!"
+pop_sound = pygame.mixer.Sound('game_assets/sounds/msg_pop.flac')
 hover_time = 0
 lvl = 0
 choice = None
@@ -130,6 +131,7 @@ money_button = Button('game_assets/quit_button', 1, 500, 600, (112, 81),
                      sound_path='game_assets/sounds/money_sound.wav', tag='money')
 trick_button = Button('game_assets/quit_button', 1, 600, 400, (112, 81),
                      sound_path='game_assets/sounds/button_click.wav', tag='trick')
+
 # Door button is excluded from here
 tool_sprites.add([candy_button, fruit_button, money_button, trick_button])
 
@@ -137,7 +139,7 @@ tool_sprites.add([candy_button, fruit_button, money_button, trick_button])
 outcome = Outcome(X_sound_path='game_assets/sounds/button_click.wav',
                   V_sound_path='game_assets/sounds/button_click.wav')
 
-
+cond = False
 #door change = False and then if change has happened, load next npc message.
 start_time = time.time()
 ################################################# GAME LOOP #########################################################
@@ -194,12 +196,13 @@ while running:
                             if not hover_time:
                                 hover_time = time.time()
                             next_button.sound.play()
-                            text_i += 1
-                            if text_i >= len(npc.texts):
+                            npc.subtext_i += 1
+                            if npc.subtext_i >= len(npc.texts):
                                 text_box_flag = False
+                                msg_button.set_released()
                                 game_sprites.remove(msg_button)
                             else:
-                                msg_texts = textfont.render(npc.texts[text_i], 1, (0, 0, 0))
+                                msg_texts = textfont.render(npc.texts[npc.subtext_i], 1, (0, 0, 0))
 
                     if event.key == pygame.K_k:
                         if door_open:
@@ -207,6 +210,7 @@ while running:
                                 if button.coll_check(player.rect.center):
                                     button.sound.play()
                                     choice = button.tag
+                                    cond = True
                                     print(choice)
 
             if event.type == pygame.KEYUP:
@@ -216,6 +220,12 @@ while running:
                     next_button.set_released()
 
         player.move_player()
+        #TODO - ONLY FOR TESTING, will be changed once everything is in motion.
+        if choice and cond:
+            npc.update_texts()
+            game_sprites.add(msg_button)
+            pop_sound.play()
+            cond = False
         npc.move_towards_player(player)
         player.rect.center = border_check(game_size, player.rect.center, 32)
         npc.rect.center = border_check(game_size, npc.rect.center, 32)

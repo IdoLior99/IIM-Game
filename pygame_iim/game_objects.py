@@ -5,12 +5,13 @@ from operator import add
 import time
 import math
 from os import listdir
+
 # Defined at the beginning, used according to each npc type
 MESSAGE_NUM = 1
-TALK_OPTIM_TEXTS = ['hello world :)', 'woopie doopie poo :D']
-QUIET_OPTIM_TEXTS = ['hey :)', 'yay! :D']
-TALK_PESSIM_TEXTS = ['hello perish now', 'kill thy self']
-QUIET_PESSIM_TEXTS = ['hey die', 'kys']
+TALK_OPTIM_TEXTS = [['hello world :)', 'woopie doopie poo :D'], ['yup', 'woo']]
+QUIET_OPTIM_TEXTS = [['hey :)', 'yay! :D'], ['yup', 'woo']]
+TALK_PESSIM_TEXTS = [['hello perish now', 'kill thy self'], ['yup', 'woo']]
+QUIET_PESSIM_TEXTS = [['hey die', 'kys'], ['yup', 'woo']]
 POSSIBLE_MSG_MATRIX = [[TALK_OPTIM_TEXTS, QUIET_OPTIM_TEXTS], [TALK_PESSIM_TEXTS, QUIET_PESSIM_TEXTS]]
 
 CORRECT = {'Princess': {'Candy', 'Fruit'},
@@ -20,6 +21,8 @@ CORRECT = {'Princess': {'Candy', 'Fruit'},
            'Tooth': {'Fruit'},
            'Businessman': {'Money'},
            'Ghost': {'Candy', 'Fruit'}}
+
+
 # TODO - Npc and Player classes
 # Toggle between them as the right direction key is pressed.
 # In case of an animated button - define the 'sensitive zone'? and find a way to get the button's coordinates.
@@ -40,7 +43,8 @@ class Animated_Sprite(pygame.sprite.Sprite):
 
 
 class Button(Animated_Sprite):
-    def __init__(self, animation_path, animation_speed, pos_x, pos_y, game_size, sound_path=None, img_format='png', tag='none'):
+    def __init__(self, animation_path, animation_speed, pos_x, pos_y, game_size, sound_path=None, img_format='png',
+                 tag='none'):
         super().__init__(animation_path, animation_speed, pos_x, pos_y, game_size, img_format)
         self.button_size = game_size
         self.key_pressed = False
@@ -61,7 +65,7 @@ class Button(Animated_Sprite):
         if self.key_pressed and self.current_sprite == 0:
             self.current_sprite += self.speed
 
-            if self.current_sprite >= len(self.sprites):
+            if self.current_sprite >= 2:
                 self.current_sprite = 0
 
         if self.key_released:
@@ -69,10 +73,17 @@ class Button(Animated_Sprite):
         self.image = self.sprites[int(self.current_sprite)]
 
     def coll_check(self, event_pos, x_offset=0, y_offset=0):
-        return (event_pos[0] in range(self.rect.center[0] - self.button_size[0] // 2-x_offset,
-                                      self.rect.center[0] + self.button_size[0] // 2+x_offset)) and \
+        return (event_pos[0] in range(self.rect.center[0] - self.button_size[0] // 2 - x_offset,
+                                      self.rect.center[0] + self.button_size[0] // 2 + x_offset)) and \
                (event_pos[1] in range(self.rect.center[1] - self.button_size[1] // 2,
-                                      self.rect.center[1] + self.button_size[1] // 2+y_offset))
+                                      self.rect.center[1] + self.button_size[1] // 2 + y_offset))
+
+
+class Door(Button):
+    def __init__(self, animation_path, animation_speed, pos_x, pos_y, game_size, sound_path=None, img_format='png'):
+        super().__init__(animation_path, animation_speed, pos_x, pos_y, game_size, sound_path, img_format)
+        self.is_open = False
+
 
 
 class Player(Animated_Sprite):
@@ -156,9 +167,11 @@ class NPC(Animated_Sprite):
         self.key_dir_released = [False, False]
         self.deltas = [0, 0]
         self.curr_dir = 0
-        # TODO both of these should depend on the npc type
-        self.texts = POSSIBLE_MSG_MATRIX[optimism][talk]
-        self.message_num = 1
+        self.subtext_i = 0
+        self.text_i = 0
+        self.opt = optimism
+        self.talk = talk
+        self.texts = POSSIBLE_MSG_MATRIX[optimism][talk][self.text_i]
         ###
         if step_sound_path:
             self.sound = pygame.mixer.Sound(step_sound_path)
@@ -187,6 +200,12 @@ class NPC(Animated_Sprite):
             self.deltas = [0, 0]
         self.rect.center = list(map(add, list(self.rect.center), self.deltas))
 
+    def update_texts(self):
+        self.subtext_i = 0
+        if self.text_i < len(POSSIBLE_MSG_MATRIX) - 1:
+            self.text_i += 1
+        self.texts = POSSIBLE_MSG_MATRIX[self.opt][self.talk][self.text_i]
+
     def update(self):
         if self.dx < 0:
             self.curr_dir = 1
@@ -212,6 +231,7 @@ class Msg_Button(Button):
         self.image = self.sprites[int(self.current_sprite)]
         rect_center = [self.npc.rect.center[0], self.npc.rect.center[1] + self.y_offset]
         self.rect.center = rect_center
+
 
 class Enemy:
     def __init__(self, enemy_pic, pos_x, pos_y, game_size, title, img_format='png'):
