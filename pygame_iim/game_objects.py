@@ -83,7 +83,21 @@ class Door(Button):
     def __init__(self, animation_path, animation_speed, pos_x, pos_y, game_size, sound_path=None, img_format='png'):
         super().__init__(animation_path, animation_speed, pos_x, pos_y, game_size, sound_path, img_format)
         self.is_open = False
+        self.shifted = False
 
+    def update(self):
+        super().update()
+        if self.is_open:
+            self.current_sprite = len(self.sprites) - 1
+            if not self.shifted:
+                self.rect.center = [self.rect.center[0]+75, self.rect.center[1]]
+            self.shifted = True
+            self.image = self.sprites[int(self.current_sprite)]
+        else:
+            if self.shifted:
+                self.rect.center = [self.rect.center[0] - 75, self.rect.center[1]]
+            self.shifted = False
+            #self.image = self.sprites[self.current_sprite]
 
 
 class Player(Animated_Sprite):

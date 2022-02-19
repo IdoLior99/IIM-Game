@@ -7,6 +7,7 @@ reaction_times = []
 answered_correctly = []
 tut_accumulative = []  # TODO: for the learning curve
 
+
 ################################################## MAIN.py FUNCTIONS #####################################################
 
 def fit_bg_dims(game_dims, bg_path):
@@ -35,9 +36,6 @@ def border_check(game_dims, p_coords, player_size):
         temp[1] = game_dims[1] - player_size
     p_coords = tuple(temp)
     return p_coords
-
-# TODO this------------->
-#def button_collision(button,player_size):
 
 
 ################################################# CREATE ENEMIES #######################################################
@@ -103,7 +101,7 @@ menu_sprites.add([play_button, quit_button])
 finish_screen = fit_bg_dims(game_size, 'game_assets/hm_bg.png')
 finish_buttons = pygame.sprite.Group()
 finish_button = Button('game_assets/quit_button', 1, 400, 300, (215, 162),
-                     sound_path='game_assets/sounds/button_click.wav')
+                       sound_path='game_assets/sounds/button_click.wav')
 finish_buttons.add(finish_button)
 
 # Game Screen:
@@ -115,8 +113,8 @@ msg_button = Msg_Button('game_assets/msg_button', 1, 400, 200, (100, 75), npc=np
 text_sprites = pygame.sprite.Group()
 next_button = Button('game_assets/next_button', 1, 720, 540, (107, 81),
                      sound_path='game_assets/sounds/button_click.wav')
-door_button = Button('game_assets/quit_button', 1, 600, 150, (160, 200),
-                     sound_path='game_assets/sounds/button_click.wav')
+door_button = Door('game_assets/door', 1, 700, 180, (300, 240),
+                     sound_path='game_assets/sounds/door_open.wav')
 
 # TODO add enemy sprites and what not
 game_sprites.add([door_button, msg_button, npc, player])
@@ -124,13 +122,13 @@ text_sprites.add([next_button])
 
 tool_sprites = pygame.sprite.Group()
 candy_button = Button('game_assets/quit_button', 1, 100, 200, (112, 81),
-                     sound_path='game_assets/sounds/candy_sound.wav', tag='candy')
+                      sound_path='game_assets/sounds/candy_sound.wav', tag='candy')
 fruit_button = Button('game_assets/quit_button', 1, 300, 400, (112, 81),
-                     sound_path='game_assets/sounds/button_click.wav', tag='fruit')
+                      sound_path='game_assets/sounds/button_click.wav', tag='fruit')
 money_button = Button('game_assets/quit_button', 1, 500, 600, (112, 81),
-                     sound_path='game_assets/sounds/money_sound.wav', tag='money')
+                      sound_path='game_assets/sounds/money_sound.wav', tag='money')
 trick_button = Button('game_assets/quit_button', 1, 600, 400, (112, 81),
-                     sound_path='game_assets/sounds/button_click.wav', tag='trick')
+                      sound_path='game_assets/sounds/button_click.wav', tag='trick')
 
 # Door button is excluded from here
 tool_sprites.add([candy_button, fruit_button, money_button, trick_button])
@@ -140,7 +138,7 @@ outcome = Outcome(X_sound_path='game_assets/sounds/button_click.wav',
                   V_sound_path='game_assets/sounds/button_click.wav')
 
 cond = False
-#door change = False and then if change has happened, load next npc message.
+# door change = False and then if change has happened, load next npc message.
 start_time = time.time()
 ################################################# GAME LOOP #########################################################
 while running:
@@ -178,6 +176,10 @@ while running:
                     button.set_hovered()
                 else:
                     button.set_released()
+            if door_button.coll_check(player.rect.center) and not door_button.shifted:
+                door_button.set_hovered()
+            else:
+                door_button.set_released()
             if event.type == pygame.KEYDOWN:
                 if not text_box_flag:
                     player.update_delts(event)
@@ -205,7 +207,10 @@ while running:
                                 msg_texts = textfont.render(npc.texts[npc.subtext_i], 1, (0, 0, 0))
 
                     if event.key == pygame.K_k:
-                        if door_open:
+                        if door_button.coll_check(player.rect.center):
+                            door_button.is_open = not door_button.is_open
+                            door_button.sound.play()
+                        if door_open:  # door_button.is_open
                             for button in tool_sprites:
                                 if button.coll_check(player.rect.center):
                                     button.sound.play()
@@ -220,7 +225,7 @@ while running:
                     next_button.set_released()
 
         player.move_player()
-        #TODO - ONLY FOR TESTING, will be changed once everything is in motion.
+        # TODO - ONLY FOR TESTING, will be changed once everything is in motion.
         if choice and cond:
             npc.update_texts()
             game_sprites.add(msg_button)
@@ -240,5 +245,5 @@ while running:
             text_sprites.update()
 
     clock.tick()
-    #print(clock.get_fps())
+    # print(clock.get_fps())
     pygame.display.update()  # TODO bad for perfomance, should keep a list of objects(rects/sprites) that are updated and only update them
