@@ -226,7 +226,7 @@ while running:
                             if door_button.coll_check(player.rect.center):
                                 if choice:
                                     door_open = False
-                                    print("Door Closed")
+                                    print("Door Closed!")
                                     final_choice = choice
                                     # TODO: stop the stopwatch
                                     choice = None
