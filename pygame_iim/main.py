@@ -38,25 +38,6 @@ def border_check(game_dims, p_coords, player_size):
     return p_coords
 
 
-################################################# CREATE ENEMIES #######################################################
-
-# TODO: use For loop
-# single_opts = ["Princess", "Robot", "Farmer", "Cookie Monster", "Tooth", "Businessman", "Ghost"]
-# Princess = Enemy("ToT - Princess", 600, 150, (215, 162), "Princess", img_format='png') # TODO: Need get?
-# Robot = Enemy("ToT - Robot", 600, 150, (215, 162), "Robot", img_format='png')
-# Farmer = Enemy("ToT - Farmer", 600, 150, (215, 162), "Farmer", img_format='png')
-# Cookie = Enemy("ToT - Cookie Monster - cartoon", 600, 150, (215, 162), "Cookie Monster", img_format='png')
-# Tooth = Enemy("ToT - Toothy", 600, 150, (215, 162), "Tooth", img_format='png')
-# Business = Enemy("ToT - Businessman", 600, 150, (215, 162), "Business", img_format='png')
-# Ghost = Enemy("ToT - Ghost", 600, 150, (215, 162), "Ghost", img_format='png')
-# reg_enemies = [Princess, Robot, Farmer, Cookie, Tooth, Business, Ghost]
-# hybrid_enemies = []
-# for i, i_opt in enumerate(single_opts):
-#     for j in range(i+1, len(single_opts)):
-#         j_opt = single_opts[j]
-#         hybrid_enemies.append(Enemy(f"ToT - {i_opt}-{j_opt}", 600, 150, (215, 162), i_opt, j_opt, img_format='png'))
-# all_enemies = reg_enemies.copy()
-# all_enemies.extend(hybrid_enemies)
 
 ################################################# INIT STUFF ###########################################################
 pygame.init()
@@ -65,6 +46,7 @@ core_surface, main_menu = game_setup(game_size, 'Tomidos project', 'game_assets/
                                      'game_assets/main_menu.png')
 text_window = pygame.image.load('game_assets/text_window.PNG')
 text_window = pygame.transform.smoothscale(text_window, [825, 400])  # Changes image dims
+title_window = pygame.transform.smoothscale(text_window, [100, 50])  # Changes image dims
 textfont = pygame.font.SysFont('leelawadeeuisemilight', 20)
 level_0 = fit_bg_dims(game_size, 'game_assets/hm_bg.png')
 curr_screen = main_menu
@@ -77,19 +59,43 @@ pop_sound = pygame.mixer.Sound('game_assets/sounds/msg_pop.flac')
 hover_time = 0
 lvl = 0
 choice = None
-door_open = True
+door_open = False
 running = True
+
+################################################# CREATE ENEMIES #######################################################
+
+game_enemy = pygame.sprite.Group()
+# TODO: use For loop
+single_opts = ["Princess", "Robot", "Farmer", "Cookie Monster", "Tooth", "Businessman", "Ghost"]
+Princess = Enemy("game_images/ToT - Princess", 600, 150, (215, 162), "Princess", img_format='png')  # TODO: Need get?
+Robot = Enemy("game_images/ToT - Robot", 600, 150, (215, 162), "Robot", img_format='png')
+Farmer = Enemy("game_images/ToT - Farmer", 600, 150, (215, 162), "Farmer", img_format='png')
+Cookie = Enemy("game_images/ToT - Cookie Monster Cartoon", 600, 150, (215, 162), "Cookie Monster", img_format='png')
+Tooth = Enemy("game_images/ToT - Ghost", 600, 150, (215, 162), "Tooth", img_format='png')  # TODO: change to Toothy pic
+Business = Enemy("game_images/ToT - Ghost", 600, 150, (215, 162), "Business", img_format='png')  # TODO: correct pic
+Ghost = Enemy("game_images/ToT - Ghost", 600, 150, (215, 162), "Ghost", img_format='png')
+reg_enemies = [Princess, Robot, Farmer, Cookie, Tooth, Business, Ghost]
+# hybrid_enemies = []
+# for i, i_opt in enumerate(single_opts):
+#     for j in range(i+1, len(single_opts)):
+#         j_opt = single_opts[j]
+#         hybrid_enemies.append(Enemy(f"ToT - {i_opt}-{j_opt}", 600, 150, (215, 162), i_opt, j_opt, img_format='png'))
+all_enemies = reg_enemies.copy()
+
+# all_enemies.extend(hybrid_enemies)
 
 # Game Enemies
 
 # REVEAL = [Tut_Enemy, ...., Tut_Last_Enemy] # TODO: should cover all basic types and 1 or 2 hybrids?
 # TUTORIAL = [Tut_Enemy, ...., Tut_Last_Enemy] # TODO: Random mixtures of all options?
-MAX_LVL = 10
+MAX_LVL = 6
+game_enemies = [all_enemies[0], all_enemies[2], all_enemies[3], all_enemies[4], all_enemies[5], all_enemies[6]]
+# MAX_LVL = 10
 # game_enemies = [all_enemies[0], all_enemies[17], all_enemies[26], all_enemies[4], all_enemies[16], all_enemies[6],
 #            all_enemies[11], all_enemies[13], all_enemies[3], all_enemies[9]]  # TODO: in len MAX_LVL
 
-################################################# SCREENS ##########################################################
-# Main Menu Screen:
+################################################# SCREENS ##############################################################
+# Main Menu Screen: ####################################################################################################
 menu_sprites = pygame.sprite.Group()
 play_button = Button('game_assets/play_button', 1, 400, 200, (215, 162),
                      sound_path='game_assets/sounds/button_click.wav')
@@ -97,14 +103,7 @@ quit_button = Button('game_assets/quit_button', 1, 400, 400, (215, 162),
                      sound_path='game_assets/sounds/button_click.wav')
 menu_sprites.add([play_button, quit_button])
 
-# Finish Screen:
-finish_screen = fit_bg_dims(game_size, 'game_assets/hm_bg.png')
-finish_buttons = pygame.sprite.Group()
-finish_button = Button('game_assets/quit_button', 1, 400, 300, (215, 162),
-                       sound_path='game_assets/sounds/button_click.wav')
-finish_buttons.add(finish_button)
-
-# Game Screen:
+# Game Screen: #########################################################################################################
 game_sprites = pygame.sprite.Group()
 player = Player('game_assets/player', 0, 370, 480, (161, 107), 1, img_format='PNG')
 npc = NPC('game_assets/skully', 0, 370, 480, (48, 54), 1, loc_offset=100, img_format='PNG')
@@ -140,6 +139,13 @@ outcome = Outcome(X_sound_path='game_assets/sounds/button_click.wav',
 cond = False
 # door change = False and then if change has happened, load next npc message.
 start_time = time.time()
+# Finish Screen: #######################################################################################################
+finish_screen = fit_bg_dims(game_size, 'game_assets/hm_bg.png')
+finish_buttons = pygame.sprite.Group()
+finish_button = Button('game_assets/quit_button', 1, 400, 300, (215, 162),
+                       sound_path='game_assets/sounds/button_click.wav')
+finish_buttons.add(finish_button)
+
 ################################################# GAME LOOP #########################################################
 while running:
     core_surface.blit(curr_screen, (0, 0))
@@ -205,7 +211,6 @@ while running:
                                 game_sprites.remove(msg_button)
                             else:
                                 msg_texts = textfont.render(npc.texts[npc.subtext_i], 1, (0, 0, 0))
-
                     if event.key == pygame.K_k:
                         if door_button.coll_check(player.rect.center):
                             door_button.is_open = not door_button.is_open
@@ -217,6 +222,38 @@ while running:
                                     choice = button.tag
                                     cond = True
                                     print(choice)
+                            # TODO: door button needs to encapsulate entire door
+                            if door_button.coll_check(player.rect.center):
+                                if choice:
+                                    door_open = False
+                                    print("Door Closed")
+                                    final_choice = choice
+                                    # TODO: stop the stopwatch
+                                    choice = None
+                                    new_outcome = outcome.check_choice(final_choice, curr_enemy)
+                                    new_outcome.sound.play()  # TODO: ALSO DISPLAY "HURRAY" AND "OOPS" messages
+                                    game_enemy.remove([curr_enemy])
+                                    answered_correctly.append(outcome.right)
+                                    # TODO: also append times. intervals between figure shows (door click) to choice (mouse click)
+                                    # TODO: close the door
+                                    time.sleep(2)  # TO DISPLAY CORRECTNESS OF ANSWER
+                                    # TODO: Next code line: Delete previous Enemy pic before waiting for next "Knock"
+                                    game_enemy.draw(core_surface)
+                                    if lvl == MAX_LVL:
+                                        curr_screen = finish_screen
+                                    else:
+                                        time.sleep(2)
+                                        door_button.sound.play()  # TODO: KNOCK KNOCK KNOCK
+                        elif not door_open:
+                            if door_button.coll_check(player.rect.center):
+                                door_open = True
+                                print("Door Opened")
+                                # TODO: Start stopwatch
+                                # TODO: Open the door
+                                curr_enemy = game_enemies[lvl]
+                                game_enemy.add([curr_enemy])
+                                enemy_title = textfont.render(curr_enemy.title, 1, (0, 0, 0))
+                                lvl += 1
 
             if event.type == pygame.KEYUP:
                 if not text_box_flag:
@@ -243,6 +280,30 @@ while running:
             core_surface.blit(msg_texts, (75, 440))
             text_sprites.draw(core_surface)
             text_sprites.update()
+        if door_open: # TODO: NEEDS PHYSICAL IMPROVING
+            core_surface.blit(title_window, (550, 25))
+            core_surface.blit(enemy_title, (560, 33))
+        game_enemy.draw(core_surface)
+
+    elif curr_screen == finish_screen:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            if event.type == pygame.MOUSEMOTION:
+                for button in finish_buttons:
+                    if button.coll_check(event.pos):
+                        button.set_hovered()
+                    else:
+                        button.set_released()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if finish_button.coll_check(event.pos):
+                    finish_button.sound.play()
+                    time.sleep(0.3)
+                    running = False
+        finish_buttons.draw(core_surface)
+        finish_buttons.update()
+
+
 
     clock.tick()
     # print(clock.get_fps())
