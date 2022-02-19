@@ -19,7 +19,7 @@ CORRECT = {'Princess': {'Candy', 'Fruit'},
            'Farmer': {'Fruit', 'Money'},
            'Cookie Monster': {'Candy'},
            'Tooth': {'Fruit'},
-           'Businessman': {'Money'},
+           'Business': {'Money'},
            'Ghost': {'Candy', 'Fruit'}}
 
 
@@ -246,10 +246,10 @@ class Msg_Button(Button):
         rect_center = [self.npc.rect.center[0], self.npc.rect.center[1] + self.y_offset]
         self.rect.center = rect_center
 
-
-class Enemy:
-    def __init__(self, enemy_pic, pos_x, pos_y, game_size, title, img_format='png'):
-        f = enemy_pic + '.' + img_format
+class Enemy(pygame.sprite.Sprite):
+    def __init__(self, animation_path, pos_x, pos_y, game_size, title, img_format='png'):
+        super().__init__()
+        f = animation_path + '.' + img_format
         img = pygame.image.load(f)
         self.image = pygame.transform.smoothscale(img, game_size)
         self.rect = self.image.get_rect()
@@ -280,3 +280,4 @@ class Outcome:
             else:
                 self.right = False
                 self.sound = self.wrong_sound
+        return self
