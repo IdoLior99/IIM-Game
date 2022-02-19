@@ -6,6 +6,17 @@ import time
 import math
 from os import listdir
 
+################################################# NPC types ############################################################
+# TODO: use player name instead of "friend"
+FRIEND = "friend"
+
+
+# Favorite NPC:
+fav_texts = [f"Hello {FRIEND}!", "First time on Halloween door duty huh?", "No Worries, I'll help you getting started"]
+fav_resps = []
+
+
+
 # Defined at the beginning, used according to each npc type
 MESSAGE_NUM = 1
 TALK_OPTIM_TEXTS = [['hello world :)', 'woopie doopie poo :D'], ['yup', 'woo']]
@@ -19,8 +30,8 @@ CORRECT = {'Princess': {'Candy', 'Fruit'},
            'Farmer': {'Fruit', 'Money'},
            'Cookie Monster': {'Candy'},
            'Tooth': {'Fruit'},
-           'Business': {'Money'},
-           'Ghost': {'Candy', 'Fruit'}}
+           'Businessman': {'Money'},
+           'Ghost': {'Candy', 'Fruit', 'Money'}}
 
 
 # TODO - Npc and Player classes
