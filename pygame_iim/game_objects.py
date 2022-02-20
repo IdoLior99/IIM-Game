@@ -34,7 +34,16 @@ NPC_1_TEXTS = [['intro', 'I am NPC 1', 'Open the door'],
 
                ['Ghost accepts anything, including money (as long as you wont trick him', 'Give something to ghost'],
 
-               ['That book there is the costume legend', 'check now to make sure you know all the basic costumes']
+               ['That book there is the costume legend', 'check now to make sure you know all the basic costumes'],
+
+               ['Hybrid 1 text', 'yeah'],
+
+               ['Hybrid 2 text', 'yeah'],
+
+               ['Hybrid 3 text - USE TRICK!', 'yeah'],
+
+               # FOR SANDBOX
+               #['sandbox intro text','bye bye!']
 
                ]
 
@@ -199,7 +208,7 @@ class Player(Animated_Sprite):
 
 class NPC(Animated_Sprite):
     def __init__(self, animation_path, animation_speed, pos_x, pos_y, game_size, move_speed, loc_offset,
-                 step_sound_path=None, img_format='png', type='favorite'):
+                 step_sound_path=None, img_format='png', type = 'favorite'):
         super().__init__(animation_path, animation_speed, pos_x, pos_y, game_size, img_format)
         self.key_dir_pressed = [False, False]
         self.key_dir_released = [False, False]
