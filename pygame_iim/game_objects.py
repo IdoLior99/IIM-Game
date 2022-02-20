@@ -24,6 +24,19 @@ QUIET_OPTIM_TEXTS = [['hey :)', 'yay! :D'], ['yup', 'woo']]
 TALK_PESSIM_TEXTS = [['hello perish now', 'kill thy self'], ['yup', 'woo']]
 QUIET_PESSIM_TEXTS = [['hey die', 'kys'], ['yup', 'woo']]
 POSSIBLE_MSG_MATRIX = [[TALK_OPTIM_TEXTS, QUIET_OPTIM_TEXTS], [TALK_PESSIM_TEXTS, QUIET_PESSIM_TEXTS]]
+NPC_3_TEXTS = [['intro ', 'I am NPC 3', 'Open the door']]
+NPC_2_TEXTS = [['intro ', 'I am NPC 2', 'Open the door']]
+NPC_1_TEXTS = [['intro', 'I am NPC 1', 'Open the door'],
+
+               ['Cookie only wants candy', 'Give candy to cookie'],
+
+               ['Princess wants either candy or fruit', 'Give one of them to princess'],
+
+               ['Ghost accepts anything, including money (as long as you wont trick him', 'Give something to ghost'],
+
+               ['That book there is the costume legend', 'check now to make sure you know all the basic costumes']
+
+               ]
 
 CORRECT = {'Princess': {'Candy', 'Fruit'},
            'Robot': {'Candy', 'Money'},
@@ -186,7 +199,7 @@ class Player(Animated_Sprite):
 
 class NPC(Animated_Sprite):
     def __init__(self, animation_path, animation_speed, pos_x, pos_y, game_size, move_speed, loc_offset,
-                 step_sound_path=None, img_format='png', inter=1, talk=0, optimism=1, type='default'):
+                 step_sound_path=None, img_format='png', type='favorite'):
         super().__init__(animation_path, animation_speed, pos_x, pos_y, game_size, img_format)
         self.key_dir_pressed = [False, False]
         self.key_dir_released = [False, False]
@@ -194,9 +207,13 @@ class NPC(Animated_Sprite):
         self.curr_dir = 0
         self.subtext_i = 0
         self.text_i = 0
-        self.opt = optimism
-        self.talk = talk
-        self.texts = POSSIBLE_MSG_MATRIX[optimism][talk][self.text_i]
+        self.is_talking = False
+        if type == 'favorite':
+            self.texts = NPC_1_TEXTS
+        elif type == 'Hyper':
+            self.texts = NPC_2_TEXTS
+        else:
+            self.texts = NPC_3_TEXTS
         ###
         if step_sound_path:
             self.sound = pygame.mixer.Sound(step_sound_path)
