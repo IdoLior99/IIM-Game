@@ -284,15 +284,33 @@ class Msg_Button(Button):
         self.rect.center = rect_center
 
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self, animation_path, pos_x, pos_y, game_size, title, img_format='png'):
+    def __init__(self, animation_path, pos_x, pos_y, game_size, title, title_2=None, img_format='png'):
         super().__init__()
-        f = animation_path + '.' + img_format
-        img = pygame.image.load(f)
-        self.image = pygame.transform.smoothscale(img, game_size)
-        self.rect = self.image.get_rect()
-        self.rect.center = [pos_x, pos_y]
-        self.title = title
-        self.correct_answers = CORRECT[title]
+        if title_2 is None:
+            f = animation_path + '.' + img_format
+            img = pygame.image.load(f)
+            self.image = pygame.transform.smoothscale(img, game_size)
+            self.rect = self.image.get_rect()
+            self.rect.center = [pos_x, pos_y]
+            self.title = title
+            self.correct_answers = CORRECT[title]
+        else:
+            f = animation_path + '.' + img_format
+            img = pygame.image.load(f)
+            self.image = pygame.transform.smoothscale(img, game_size)
+            self.rect = self.image.get_rect()
+            self.rect.center = [pos_x, pos_y]
+            self.title = f"{title}-{title_2}"
+            self.correct_answers = CORRECT[title].intersection(CORRECT[title_2])
+
+
+    def coll_check(self, event_pos, x_offset=0, y_offset=0):
+        return (event_pos[0] in range(self.rect.center[0] - 100 // 2 - x_offset,
+                                      self.rect.center[0] + 100 // 2 + x_offset)) and \
+               (event_pos[1] in range(self.rect.center[1] - 100 // 2,
+                                      self.rect.center[1] + 100 // 2 + y_offset))
+
+
 
     def get_enemy(self):
         return self

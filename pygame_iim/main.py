@@ -1,6 +1,7 @@
 import pygame
 from game_objects import *
 import time
+from random import randrange
 
 ##################################################### MEASURES #########################################################
 reaction_times = []
@@ -105,6 +106,7 @@ hint_text = "Press k to interact with close objects!"
 pop_sound = pygame.mixer.Sound('game_assets/sounds/msg_pop.flac')
 hover_time = 0
 lvl = 0
+npc_flag = False
 choice = None
 door_open = False
 door_rang = False
@@ -118,34 +120,36 @@ tut_lvl = 0
 game_enemy = pygame.sprite.Group()
 # TODO: use For loop
 single_opts = ["Princess", "Robot", "Farmer", "Cookie Monster", "Tooth", "Businessman", "Ghost"]
-Princess = Enemy("game_images/ToT - Princess", 600, 150, (215, 162), "Princess", img_format='png')  # TODO: Need get?
-Robot = Enemy("game_images/ToT - Robot", 600, 150, (215, 162), "Robot", img_format='png')
-Farmer = Enemy("game_images/ToT - Farmer", 600, 150, (215, 162), "Farmer", img_format='png')
-Cookie = Enemy("game_images/ToT - Cookie Monster Cartoon", 600, 150, (215, 162), "Cookie Monster", img_format='png')
-Tooth = Enemy("game_images/ToT - Ghost", 600, 150, (215, 162), "Tooth", img_format='png')  # TODO: change to Toothy pic
-Business = Enemy("game_images/ToT - Ghost", 600, 150, (215, 162), "Businessman", img_format='png')  # TODO: correct pic
-Ghost = Enemy("game_images/ToT - Ghost", 600, 150, (215, 162), "Ghost", img_format='png')
+Princess = Enemy("game_images/ToT - Princess", 700, 180, (215, 162), "Princess", img_format='png')  # TODO: Need get?
+Robot = Enemy("game_images/ToT - Robot", 700, 180, (215, 162), "Robot", img_format='png')
+Farmer = Enemy("game_images/ToT - Farmer", 700, 180, (215, 162), "Farmer", img_format='png')
+Cookie = Enemy("game_images/ToT - Cookie Monster Cartoon", 700, 180, (215, 162), "Cookie Monster", img_format='png')
+Tooth = Enemy("game_images/ToT - Ghost", 700, 180, (215, 162), "Tooth", img_format='png')  # TODO: change to Toothy pic
+Business = Enemy("game_images/ToT - Ghost", 700, 180, (215, 162), "Businessman", img_format='png')  # TODO: correct pic
+Ghost = Enemy("game_images/ToT - Ghost", 700, 180, (215, 162), "Ghost", img_format='png')
 reg_enemies = [Princess, Robot, Farmer, Cookie, Tooth, Business, Ghost]
 hybrid_enemies = []
-# for i, i_opt in enumerate(single_opts):
-#     for j in range(i+1, len(single_opts)):
-#         j_opt = single_opts[j]
-#         hybrid_enemies.append(Enemy(f"ToT - {i_opt}-{j_opt}", 600, 150, (215, 162), i_opt, j_opt, img_format='png'))
+for i, i_opt in enumerate(single_opts):
+    for j in range(i+1, len(single_opts)):
+        j_opt = single_opts[j]
+        #hybrid_enemies.append(Enemy(f"game_images/ToT - {i_opt}-{j_opt}", 600, 150, (215, 162), i_opt, j_opt, img_format='png'))
+        # For Testing purposes:
+        hybrid_enemies.append(Enemy(f"game_images/ToT - Robot", 700, 180, (215, 162), i_opt, j_opt, img_format='png'))
 all_enemies = reg_enemies.copy()
-
-# all_enemies.extend(hybrid_enemies)
+all_enemies.extend(hybrid_enemies)
 
 # Game Enemies
 
 # REVEAL = [Tut_Enemy, ...., Tut_Last_Enemy] # TODO: should cover all basic types and 1 or 2 hybrids?
 tut_enemies = [Cookie, Princess, Ghost, Cookie, Princess, Ghost]#, hybrid_enemies[0], hybrid_enemies[7], hybrid_enemies[4]]
-MAX_LVL = 6
+MAX_LVL = 2
 game_enemies = [all_enemies[0], all_enemies[2]] #all_enemies[3], all_enemies[4], all_enemies[5], all_enemies[6]]
 # MAX_LVL = 10
 # game_enemies = [all_enemies[0], all_enemies[17], all_enemies[26], all_enemies[4], all_enemies[16], all_enemies[6],
 #            all_enemies[11], all_enemies[13], all_enemies[3], all_enemies[9]]  # TODO: in len MAX_LVL
 
 ################################################# SCREENS ##############################################################
+
 # Main Menu Screen: ####################################################################################################
 menu_sprites = pygame.sprite.Group()
 play_button = Button('game_assets/play_button', 1, 400, 200, (215, 162),
@@ -315,7 +319,7 @@ while running:
                         if legend_button in available_tools and legend_button.coll_check(player.rect.center):
                             legend_button.sound.play()  # for hybrid, after legend is intro'd
                             curr_screen = legend_screen
-                        if door_button.coll_check(player.rect.center):  # TODO: Use Enemy coll check
+                        if curr_enemy.coll_check(player.rect.center):  # TODO: Use Enemy coll check
                             if choice:
                                 final_choice = choice
                                 choice = None
@@ -329,6 +333,8 @@ while running:
                                 door_button.is_open = not door_button.is_open
                                 ts = time.time()
                                 tut_phase += 1
+                                if tut_phase == 8:
+                                    sandbox_time = time.time()
                                 if tut_phase == 4:
                                     game_sprites.add(msg_button)
                                     available_tools.append(legend_button)
@@ -345,6 +351,10 @@ while running:
                                 game_enemy.add([curr_enemy])
                                 tut_lvl += 1
                                 enemy_title = textfont.render(curr_enemy.title, 1, (0, 0, 0))
+
+                            else:
+                                # TODO: NPC says "First pick an item"
+                                pass
 
                     if event.key == pygame.K_l:
                         msg_texts = npc_talk(npc, msg_button, game_sprites, player, tut_phase)
@@ -387,13 +397,88 @@ while running:
                          text_sprites, door_button)
 
         elif tut_phase == 8: #8 is sandbox phase
-           tut_phase += 1
-           game_sprites.remove(npc,msg_button)
-           update_frame(player, None, game_sprites, tool_sprites, core_surface, text_window, msg_texts,
-                        text_sprites, door_button)
-           tut_lvl = 0
+            for event in pygame.event.get():
+                if npc.is_talking:
+                    player.deltas = [0, 0]
+                if time.time() - ts > 1 and not knocked:
+                    pop_sound.play()
+                    knocked = True
+                if event.type == pygame.QUIT:
+                    running = False
 
-        else: #Not tutorial
+                for button in tool_sprites:
+                    if button in available_tools:
+                        if door_button.is_open and button.coll_check(player.rect.center):
+                            button.set_hovered()
+                        else:
+                            button.set_released()
+                if door_button.coll_check(player.rect.center):
+                    door_button.set_hovered()
+                else:
+                    door_button.set_released()
+                if event.type == pygame.KEYDOWN:
+                    if not npc.is_talking:
+                        player.update_delts(event)
+                    if event.key == pygame.K_ESCAPE:
+                        curr_screen = main_menu
+                    if event.key == pygame.K_n:
+                        npc_flag = True
+                        game_sprites.remove(npc, msg_button)
+                        tut_phase = 10
+                        tut_lvl = 0
+                        sandbox_time = time.time() - sandbox_time
+                    if event.key == pygame.K_k:
+                        for button in tool_sprites:
+                            if button in available_tools:
+                                if door_button.is_open and button.coll_check(player.rect.center):
+                                    button.sound.play()
+                                    choice = button.tag
+                                    print(choice)
+                        if legend_button in available_tools and legend_button.coll_check(player.rect.center):
+                            legend_button.sound.play()  # for hybrid, after legend is intro'd
+                            curr_screen = legend_screen
+                        if curr_enemy.coll_check(player.rect.center):  # TODO: Use Enemy coll check
+                            if choice:
+                                final_choice = choice
+                                choice = None
+                                new_outcome = outcome.check_choice(final_choice, curr_enemy)
+                                new_outcome.sound.play()
+                                game_enemy.remove([curr_enemy])
+                                door_button.is_open = not door_button.is_open
+                                tut_accumulative.append(time.time() - ts) # For the learning curve
+                                ts = time.time()
+                                knocked = False
+                                print("Now at phase {}".format(tut_phase))
+
+                            elif not door_button.is_open and time.time() - ts > 1:
+                                door_button.is_open = not door_button.is_open
+                                door_button.sound.play()
+                                curr_enemy_num = randrange(0, 28)
+                                print(curr_enemy_num)
+                                curr_enemy = all_enemies[curr_enemy_num]
+                                game_enemy.add(curr_enemy)
+                                enemy_title = textfont.render(curr_enemy.title, 1, (0, 0, 0))
+                            else:
+                                # TODO: NPC says "First pick an item"
+                                pass
+
+                    if event.key == pygame.K_l:
+                        msg_texts = npc_talk(npc, msg_button, game_sprites, player, tut_phase)
+
+                if event.type == pygame.KEYUP:
+                    if not npc.is_talking:
+                        player.update_delts(event, down=False)
+                    if event.key == pygame.K_l:
+                        next_button.set_released()
+                    if event.key == pygame.K_n:
+                        next_button.set_released()
+            if npc_flag:
+                npc = None  # TODO: line is controversial. might not work.
+            update_frame(player, npc, game_sprites, tool_sprites, core_surface, text_window, msg_texts,
+                         text_sprites, door_button)
+
+
+        else: # Not tutorial
             for event in pygame.event.get():
                 if time.time() - ts > 1 and not knocked:
                     pop_sound.play()
@@ -461,18 +546,16 @@ while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-            if event.type == pygame.MOUSEMOTION:
-                for button in legend_buttons:
-                    if button.coll_check(event.pos):
-                        button.set_hovered()
-                    else:
-                        button.set_released()
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if cont_button.coll_check(event.pos):
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_k:
+                    cont_button.set_hovered()
                     cont_button.sound.play()
                     if tut_phase == 4:
                         tut_phase += 1
                     curr_screen = level_0
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_k:
+                    cont_button.set_released()
         legend_buttons.draw(core_surface)
         legend_buttons.update()
 
@@ -480,17 +563,17 @@ while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-            if event.type == pygame.MOUSEMOTION:
-                for button in finish_buttons:
-                    if button.coll_check(event.pos):
-                        button.set_hovered()
-                    else:
-                        button.set_released()
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if finish_button.coll_check(event.pos):
-                    finish_button.sound.play()
-                    time.sleep(0.3)
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
                     running = False
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_k:
+                        finish_button.set_hovered()
+                        finish_button.sound.play()
+                        running = False
+                if event.type == pygame.KEYUP:
+                    if event.key == pygame.K_k:
+                        finish_button.set_released()
         finish_buttons.draw(core_surface)
         finish_buttons.update()
 
