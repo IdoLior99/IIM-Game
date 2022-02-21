@@ -423,8 +423,10 @@ while running:
             # This tells the player that the LEGEND is always available
             msg_texts = npc_resp(npc, npc.resps["legend"])
             tut_phase += 0.5
+            # TODO: Add NEXT button and another 0.25 tut_phase if necessary.
             update_frame(player, npc, game_sprites, tool_sprites, core_surface, text_window, msg_texts,
                      text_sprites, door_button)
+
 
         elif tut_phase == 4: #Legend
             door_button.set_released()

@@ -11,6 +11,8 @@ from random import randrange
 # TODO: use player name instead of "friend"
 #FRIEND = input("Enter your name: ")  # TODO: Remember to add Textbox in game for this.
 FRIEND = "friend"
+
+
 def npc_texter(npc_type, FRIEND):
     if npc_type == "Favorite":
         # Favorite NPC:
