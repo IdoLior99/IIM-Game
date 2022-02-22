@@ -6,10 +6,10 @@ import time
 import math
 from os import listdir
 from random import randrange
+import numpy as np
 
 ################################################# NPC types ############################################################
-# TODO: use player name instead of "friend"
-# FRIEND = input("Enter your name: ")  # TODO: Remember to add Textbox in game for this.
+
 FRIEND = "friend"
 
 
@@ -40,13 +40,13 @@ def npc_texter(npc_type, FRIEND):
 
         texts.append([f"So this one is a hybrid costume.",
                       "People with hybrid costumes want to get something that both original costumes would like.",
-                      "For Example, princesses like candies and fruits. Robots like both candies and money."
+                      "For Example, Princesses like candies and fruits. Farmers like both fruit and money."
                       "What can we give them that they will both like?"])
 
         texts.append([f"Here's another hybrid, let's see if you got this"])
 
-        texts.append(
-            ["Lastly, let's see you handle this hybrid. I'll be here if you need help, just come over and press L"])
+        # texts.append(
+        #     ["Lastly, let's see you handle this hybrid. I'll be here if you need help, just come over and press L"])
 
         texts.append(["This one's weird huh? Because this hybrid isn't a regular one. if both parts of the hybrid don't"
                       "share any preference, there's nothing you can give it. And if we can't TREAT them, we TRICK them."
@@ -67,6 +67,7 @@ def npc_texter(npc_type, FRIEND):
         resps["hybrid"] = "What could we give both if they were separated? if there's no such thing it's kinda TRICKy."
         resps["base"] = "This one is easy. you got this LEGEND."
         resps["ghost"] = "Ghosts have no effect on our lives don't you think? how ghosts effect other visitors?"
+        resps["done"] = "Alright I'm out, attic zombie needs my help, good luck with this batch recruit!"
 
     elif npc_type == "Hyper":
         # HYPER NPC:
@@ -92,12 +93,12 @@ def npc_texter(npc_type, FRIEND):
 
         texts.append([f"So this one is a hybrid costume.",
                       "People with hybrid costumes want to get something that both original costumes would like.",
-                      "For Example, princesses like candies and fruits. Robots like both candies and money."
+                      "For Example, Princesses like candies and fruits. Farmers like both fruit and money."
                       "What can we give them that they will both like?"])
 
         texts.append([f"Here's another hybrid, let's see if you got this"])
-        texts.append(
-            [f"Lastly, let's see you handle this hybrid. I'll be here if you need help, just come over and press L"])
+        # texts.append(
+        #     [f"Lastly, let's see you handle this hybrid. I'll be here if you need help, just come over and press L"])
 
         texts.append(
             [f"Don't know what to do huh? Because this hybrid is a special one! if both parts of the hybrid don't"
@@ -122,6 +123,7 @@ def npc_texter(npc_type, FRIEND):
         resps["hybrid"] = "What could we give both if they were separated? if there's no such thing it's kinda TRICKy."
         resps["base"] = "You don't need my help with this one. you are a LEGEND."
         resps["ghost"] = "Funny thing about ghosts, Whether they exist or NOT, EVERYTHING STAYS THE SAME in life."
+        resps["done"] = "Alright I'm out, attic zombie needs my help, good luck with this batch recruit!"
 
     else:
         # Aloof NPC:
@@ -130,22 +132,29 @@ def npc_texter(npc_type, FRIEND):
                       "If you need help, come over to me and press L"])
         texts.append(["Your first visitor is Cookie Monster and he likes cookies.",
                       "Go to the candy jar and press K to take a candy"])
-        texts.append(["Good, now go to the door and give it to him (by pressing K)"])
+
+        #texts.append(["Good, now go to the door and give it to him (by pressing K)"])
         texts.append(["Your next visitor is a princess.",
                       "Princesses like candy and also fruits. You can give her either"])
+
         texts.append(["This visitor is a ghost. Ghosts don't mind getting candy, fruit or money. Give it either"])
+
         texts.append(["There are a few more visitors that may appear with different preferences.",
                       "To make sure you know all these preferences, I hung a legend for you on the wall.",
                       "Go to the legend and press K to read it"])
+
         texts.append(["This one is a hybrid costume.",
                       "Hybrid costumes want to get something that satisfies both original costumes.",
-                      "Princesses like candies and fruits. Robots like both candies and money. What can ypu give both?"])
+                      "Princesses like candies and fruits. Farmers like both fruit and money. What can ypu give both?"])
         texts.append(["Try to handle this one on your own."])
-        texts.append(["Lastly, let's see you handle this one. If you need help, come over and press L"])
+
+        #texts.append(["Lastly, let's see you handle this one. If you need help, come over and press L"])
+
         texts.append(["This hybrid is a special one, if both parts of the hybrid don't share preferences"
                       "you can't TREAT them.",
                       "If you can't TREAT them, TRICK them. Go take the water gun of the wall"
                       "Then go to the visitor and press K to shoot"])
+
         texts.append(["The tutorial is now over. You can continue practicing for as long as you want"
                       "and then continue to the real game (by pressing N).",
                       "During the real game, you'll need to work fast. "
@@ -158,10 +167,10 @@ def npc_texter(npc_type, FRIEND):
         resps["knock"] = "Go to the door and press K to open it"
         resps["yas"] = ["Good", "cool", "Great Job", "Great"]
         resps["try"] = "This one's wrong. Try again."
-        resps[
-            "hybrid"] = "What can you give both costume parts? Can you give them both the same thing? else it's TRICK."
+        resps["hybrid"] = "What can you give this hybrid? Can you give them both the same thing? else it's TRICK."
         resps["base"] = "Remember you can always use the LEGEND."
         resps["ghost"] = "Ghost hybrids are interesting. Think about the way they act."
+        resps["done"] = "Alright I'm out, attic zombie needs my help, good luck with this batch recruit!"
 
     return texts, resps
 
@@ -336,6 +345,7 @@ class NPC(Animated_Sprite):
         self.subtext_i = 0
         self.text_i = 0
         self.is_talking = False
+        self.curr_response = None
         self.type = type
         self.friend_name = friend_name
         self.texts, self.resps = npc_texter(type, friend_name)
@@ -356,10 +366,10 @@ class NPC(Animated_Sprite):
         self.dx, self.dy = 0, 0
         self.rect.center = [pos_x + loc_offset, pos_y + loc_offset]
 
-    def move_towards_player(self, player):
-        self.dx, self.dy = player.rect.center[0] - self.rect.center[0], player.rect.center[1] - self.rect.center[1]
-        if abs(self.dx) >= 70 or abs(self.dy) >= 70:
-            dist = math.dist(player.rect.center, self.rect.center)
+    def move_towards_coords(self, coords,offset = 70):
+        self.dx, self.dy = coords[0] - self.rect.center[0], coords[1] - self.rect.center[1]
+        if abs(self.dx) >= offset or abs(self.dy) >= offset:
+            dist = math.dist(coords, self.rect.center)
             self.dx, self.dy = self.dx / dist, self.dy / dist  # Normalize
             self.deltas[0] += self.dx * self.move_speed
             self.deltas[1] += self.dy * self.move_speed
@@ -375,6 +385,73 @@ class NPC(Animated_Sprite):
         good = randrange(0, len(self.resps["yas"]))
         return self.resps["yas"][good]
 
+    def npc_talk(self, msg_button, game_sprites, player, tut_phase, resp_conds, resp_texts, event,next_button,textfont,curr_enemy = None):
+        """
+        Determines what the npc should say next (if anything at all)
+        :param tut_phase: How far into the tutorial are we
+        :param resp_conds: Various conditions for condition-based repsonses
+        :param resp_texts: Various responses incasae said condition is met
+        :param event: in event.get.
+        :return: msg_texts - text to be said by the npc.
+        """
+        if self.text_i != tut_phase:
+            self.text_i = tut_phase
+        texts = self.texts[self.text_i]
+        if curr_enemy:  # We want to load enemy - specific texts? we're in the sandbox phase
+            pass
+        msg_texts = ""
+        # Needed if a response is script-dependant.
+        action = 0  # 0 == didn't talk, 1 == scripted talking, 2 == responding, 3 == scripted message done, 4 == response message done
+        # Can only respond once, looks for the first response condition
+        resp_i = np.where(resp_conds)[0]
+        resp_cond = resp_conds[resp_i[0]] if resp_i.size else False
+        if resp_cond or self.curr_response:  # Response
+            if not self.is_talking:
+                if resp_cond:  # Npc should respond to something rn.
+                    self.is_talking = True
+                    self.curr_response = textfont.render(resp_texts[resp_i[0]], 1, (0, 0, 0))
+                    msg_texts = textfont.render(resp_texts[resp_i[0]], 1, (0, 0, 0))
+                    action = 2
+
+            else:  # npc is already talking
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_l:  # l was pressed to advance
+                    next_button.set_hovered()
+                    next_button.sound.play()
+                    self.is_talking = False  # Responses are exclusively 1-panel
+                    self.curr_response = None
+                    action = 4
+                else:  # Frame idle
+                    msg_texts = self.curr_response
+                    action = 2
+
+        else:  # Scripted talk
+            if not self.is_talking:
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_l:  # Npc should start with a scripted message
+                    if msg_button in game_sprites and msg_button.coll_check(player.rect.center, x_offset=50,
+                                                                            y_offset=80):
+                        msg_button.set_hovered()
+                        msg_button.sound.play()
+                        self.is_talking = True
+                        msg_texts = textfont.render(texts[self.subtext_i], 1, (0, 0, 0))
+                        action = 1
+            else:  # npc is already talking
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_l:  # l was pressed to advance
+                    next_button.set_hovered()
+                    next_button.sound.play()
+                    if msg_button in game_sprites:
+                        self.subtext_i += 1
+                        if self.subtext_i >= len(texts):
+                            self.is_talking = False
+                            self.text_i += 1
+                            self.subtext_i = 0
+                            msg_button.set_released()
+                            game_sprites.remove(msg_button)
+                            action = 3
+                else:
+                    msg_texts = textfont.render(texts[self.subtext_i], 1, (0, 0, 0))
+                    action = 1
+
+        return msg_texts, action
     def update(self):
         if self.dx < 0:
             self.curr_dir = 1
@@ -441,6 +518,7 @@ class Enemy(pygame.sprite.Sprite):
 class Outcome:
     def __init__(self, V_sound_path, X_sound_path):
         self.right = False
+        self.wrong = False
         self.right_sound = pygame.mixer.Sound(V_sound_path)
         self.right_sound.set_volume(0.2)
         self.wrong_sound = pygame.mixer.Sound(X_sound_path)
@@ -451,8 +529,14 @@ class Outcome:
         if choice:
             if choice in curr_enemy.correct_answers:
                 self.right = True
+                self.wrong = False
                 self.sound = self.right_sound
             else:
                 self.right = False
+                self.wrong = True
                 self.sound = self.wrong_sound
         return self
+
+    def reset(self):
+        self.right = False
+        self.wrong = False

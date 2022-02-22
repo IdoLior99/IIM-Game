@@ -254,7 +254,7 @@ while running:
 
 
     player.move_player()
-    npc.move_towards_player(player)
+    npc.move_towards_coords(player)
     player.rect.center = border_check(game_size, player.rect.center, 32)
     npc.rect.center = border_check(game_size, npc.rect.center, 32)
     curr_screen = curr_screen_flag
