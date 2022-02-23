@@ -307,7 +307,7 @@ class Animated_Sprite(pygame.sprite.Sprite):
 
 class Button(Animated_Sprite):
     def __init__(self, animation_path, animation_speed, pos_x, pos_y, game_size, sound_path=None, img_format='png',
-                 tag='none'):
+                 tag=None):
         super().__init__(animation_path, animation_speed, pos_x, pos_y, game_size, img_format)
         self.button_size = game_size
         self.key_pressed = False
@@ -338,7 +338,7 @@ class Button(Animated_Sprite):
     def coll_check(self, event_pos, x_offset=0, y_offset=0):
         return (event_pos[0] in range(self.rect.center[0] - self.button_size[0] // 2 - x_offset,
                                       self.rect.center[0] + self.button_size[0] // 2 + x_offset)) and \
-               (event_pos[1] in range(self.rect.center[1] - self.button_size[1] // 2,
+               (event_pos[1] in range(self.rect.center[1] - self.button_size[1] // 2 - y_offset,
                                       self.rect.center[1] + self.button_size[1] // 2 + y_offset))
 
 
@@ -529,7 +529,8 @@ class NPC(Animated_Sprite):
                     action = 2
 
             else:  # npc is already talking
-                if event.type == pygame.KEYDOWN and event.key == pygame.K_l:  # l was pressed to advance
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_l or \
+                        (event.type == pygame.MOUSEBUTTONDOWN and next_button.coll_check(event.pos)):  # l was pressed to advance
                     next_button.set_hovered()
                     next_button.sound.play()
                     self.is_talking = False  # Responses are exclusively 1-panel
@@ -550,7 +551,8 @@ class NPC(Animated_Sprite):
                         msg_texts = texts[self.subtext_i]
                         action = 1
             else:  # npc is already talking
-                if event.type == pygame.KEYDOWN and event.key == pygame.K_l:  # l was pressed to advance
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_l or \
+                        (event.type == pygame.MOUSEBUTTONDOWN and next_button.coll_check(event.pos)):  # l was pressed to advance
                     next_button.set_hovered()
                     next_button.sound.play()
                     if msg_button in game_sprites:
@@ -862,7 +864,7 @@ active = False
 
 # Game Screen: #########################################################################################################
 game_sprites = pygame.sprite.Group()
-player = Player('game_assets_f/player', 0, 370, 480, (161, 121), 2, img_format='PNG')
+player = Player('game_assets_f/player', 0, 370, 480, (129, 97), 2, img_format='PNG')
 npc_types = ["Favorite", "Hyper", "Aloof"]
 random_type = randrange(0, 3)
 # random_type = 2
@@ -1059,10 +1061,6 @@ while running:
     elif curr_screen == level_0:
         if tut_phase == 0:
             knocked = knock_on_door(done_talking_flag == 3 and not knocked, knocked)
-            # if time.time() - ts > 1 and not knocked:
-            #     if tut_phase != 1:
-            #         knock_sound.play()
-            #     knocked = True
             if done_talking_flag == 3 and not knocked:
                 door_button.set_hovered()
                 knock_sound.play()
@@ -1149,7 +1147,7 @@ while running:
 
                 for button in tool_sprites:
                     if button in available_tools:
-                        if door_button.is_open and button.coll_check(player.rect.center):
+                        if door_button.is_open and button.coll_check(player.rect.center,x_offset=25,y_offset=25):
                             button.set_hovered()
                         else:
                             button.set_released()
@@ -1166,10 +1164,11 @@ while running:
                     if event.key == pygame.K_k:
                         for button in tool_sprites:
                             if button in available_tools:
-                                if door_button.is_open and button.coll_check(player.rect.center):
+                                if door_button.is_open and button.coll_check(player.rect.center,x_offset=25,y_offset=25):
                                     button.sound.play()
                                     choice = button.tag
-                                    player.change_sprite('game_assets_f/player_aux/player_{}.png'.format(choice))
+                                    if choice is not None:
+                                        player.change_sprite('game_assets_f/player_aux/player_{}.png'.format(choice))
                         if legend_button in available_tools and legend_button.coll_check(player.rect.center):
                             legend_button.sound.play()  # for hybrid, after legend is intro'd
                             curr_screen = legend_screen
@@ -1311,7 +1310,7 @@ while running:
 
                 for button in tool_sprites:
                     if button in available_tools:
-                        if door_button.is_open and button.coll_check(player.rect.center):
+                        if door_button.is_open and button.coll_check(player.rect.center,x_offset=25,y_offset=25):
                             button.set_hovered()
                         else:
                             button.set_released()
@@ -1331,10 +1330,11 @@ while running:
                     if event.key == pygame.K_k:
                         for button in tool_sprites:
                             if button in available_tools:
-                                if door_button.is_open and button.coll_check(player.rect.center):
+                                if door_button.is_open and button.coll_check(player.rect.center,x_offset=25,y_offset=25):
                                     button.sound.play()
                                     choice = button.tag
-                                    player.change_sprite('game_assets_f/player_aux/player_{}.png'.format(choice))
+                                    if choice:
+                                        player.change_sprite('game_assets_f/player_aux/player_{}.png'.format(choice))
                         if legend_button in available_tools and legend_button.coll_check(player.rect.center):
                             legend_button.sound.play()  # for hybrid, after legend is intro'd
                             curr_screen = legend_screen
@@ -1384,7 +1384,7 @@ while running:
                     sys.exit()
                 for button in tool_sprites:
                     if button in available_tools:
-                        if door_button.is_open and button.coll_check(player.rect.center):
+                        if door_button.is_open and button.coll_check(player.rect.center,x_offset=25,y_offset=25):
                             button.set_hovered()
                         else:
                             button.set_released()
@@ -1399,10 +1399,11 @@ while running:
                     if event.key == pygame.K_k:
                         for button in tool_sprites:
                             if button in available_tools:
-                                if door_button.is_open and button.coll_check(player.rect.center):
+                                if door_button.is_open and button.coll_check(player.rect.center, x_offset=25,y_offset=25):
                                     button.sound.play()
                                     choice = button.tag
-                                    player.change_sprite('game_assets_f/player_aux/player_{}.png'.format(choice))
+                                    if choice:
+                                        player.change_sprite('game_assets_f/player_aux/player_{}.png'.format(choice))
                         if legend_button in available_tools and legend_button.coll_check(player.rect.center):
                             legend_button.sound.play()  # for hybrid, after legend is intro'd
                             curr_screen = legend_screen
