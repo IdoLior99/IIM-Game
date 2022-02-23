@@ -32,14 +32,14 @@ def npc_texter(npc_type, FRIEND):
              "That's why it doesn't mind getting candy, fruit or money. Give it either of them"])
 
         texts.append([f"There are a few more visitors that may appear with different preferences.",
-                      "I hung a legend for you on the wall with different costumes and their preferences "
+                      "I hung a LEGEND for you on the wall with different costumes and their preferences "
                       "in case you forget",
-                      "Go to the legend and press K to read it"])
+                      "Go to the LEGEND (above the shelf) and press K to read it"])
 
         texts.append([f"So this one is a hybrid costume.",
                       "People with hybrid costumes want something that both original costumes would like.",
                       "For Example, \nPrincesses like candies and fruits. Farmers like both fruit and money."
-                      "What can we give them that they will both like?"])
+                      "\nWhat can we give them that they will both like?"])
 
         texts.append([f"Here's another hybrid, let's see if you got this"])
 
@@ -50,7 +50,7 @@ def npc_texter(npc_type, FRIEND):
                       "\nIf both parts of the hybrid don't share any preference, "
                       "\nthere's nothing you can give it.",
                       "And if we can't TREAT them, we TRICK them."
-                      "Go take the water gun off the wall and TRICK this hybrid."])
+                      "\nGo take the water gun off the wall and TRICK this hybrid."])
 
         texts.append(["So the tutorial is now over but you can continue practicing for as long as you like"
                       "\nWhen you want to continue to the real game, press N.",
@@ -72,7 +72,7 @@ def npc_texter(npc_type, FRIEND):
         resps["base"] = "This one is easy. you got this LEGEND."
         resps["ghost"] = "Ghosts have no effect on our lives don't you think? " \
                          "\nHow ghosts affect other visitors?"
-        resps["done"] = f"Alright I'm out, attic zombie needs my help. Good luck!"
+        resps["done"] = f"Apparently attic zombie needs my help. I gotta go, Good luck!"
 
     elif npc_type == "Hyper":
         # HYPER NPC:
@@ -113,12 +113,13 @@ def npc_texter(npc_type, FRIEND):
              "It means they're messing with you. And if we can't TREAT them, we TRICK them."
              "\nGo take the water gun off the wall and give them a lesson."])
 
-        texts.append(["Alright, the tutorial is now over. You can continue practicing for as long as you like"
-                      "and then continue to the real game (by pressing N).",
+        texts.append(["Alright, the tutorial is now over. You can continue practicing for as long as you like.",
+                      "Whenever you feel ready,"
+                      "\nContinue to the real game by pressing N.",
                       "It's important to note that during the real game, you'll need to work fast."
-                      " Your score will be based on both time and accuracy.",
+                      "\nYour score will be based on both time and accuracy.",
                       f"I'll stay here to help when you need me until you get to the next level."
-                      f" after that you're on your own. Hope I helped you {FRIEND}!"])
+                      f"\nAfter that you're on your own. Hope I helped you {FRIEND}!"])
 
         resps = dict()
         resps["nothing"] = f"We can't come empty-handed {FRIEND}, We got to choose something to give first."

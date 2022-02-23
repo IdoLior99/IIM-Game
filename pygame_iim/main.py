@@ -52,15 +52,23 @@ def knock_on_door(cond, knocked):
         knocked = True
     return knocked
 
+def score(ans_lst, time_lst):
+    score = 0
+    for i, ans in enumerate(ans_lst):
+        if ans:
+            tim = time_lst[i]
+            score += (2.5/tim)
+    return score
 
-def adj_draw(msg_texts, core_surface):
+def adj_draw(msg_texts, core_surface, x=75, y=440):
     texts = msg_texts.splitlines()
     for i, text in enumerate(texts):
         msg_text = textfont.render(text, 1, (0, 0, 0))
-        core_surface.blit(msg_text, (75, 440 + i * 20))
+        core_surface.blit(msg_text, (x, y + i * 25))
 
 
-def update_frame(player, npc, game_sprites, tool_sprites, core_surface, text_window, msg_texts, text_sprites, door):
+def update_frame(player, npc, game_sprites, tool_sprites, core_surface, text_window, msg_texts, text_sprites, door,
+                 stats=None):
     player.move_player()
     if npc:
         npc.move_towards_coords(player.rect.center)
@@ -68,7 +76,7 @@ def update_frame(player, npc, game_sprites, tool_sprites, core_surface, text_win
     player.rect.center = border_check(game_size, player.rect.center, 32)
     if door.is_open:
         core_surface.blit(title_window, (430, 43))
-        core_surface.blit(enemy_title, (447, 63))
+        core_surface.blit(enemy_title, (449, 63))
     tool_sprites.draw(core_surface)
     tool_sprites.update()
     game_enemy.draw(core_surface)
@@ -82,7 +90,11 @@ def update_frame(player, npc, game_sprites, tool_sprites, core_surface, text_win
         adj_draw(msg_texts, core_surface)
         text_sprites.draw(core_surface)
         text_sprites.update()
-
+    if stats:
+        core_surface.blit(stats_window, (400, 200))
+        adj_draw(msg_texts, core_surface, x=400, y=200)
+        text_sprites.draw(core_surface)
+        text_sprites.update()
 
 ################################################# INIT STUFF ###########################################################
 pygame.init()
@@ -91,7 +103,8 @@ core_surface, main_menu = game_setup(game_size, 'Tomidos project', 'game_assets_
                                      'game_assets_f/Backgrounds/mm_bg.png')
 text_window = pygame.image.load('game_assets_f/text_window.PNG')
 text_window = pygame.transform.smoothscale(text_window, [825, 400])  # Changes image dims
-title_window = pygame.transform.smoothscale(text_window, [320, 70])  # Changes image dims
+title_window = pygame.transform.smoothscale(text_window, [300, 70])  # Changes image dims
+stats_window = pygame.transform.smoothscale(text_window, [600, 400])  # Changes image dims
 textfont = pygame.font.SysFont('leelawadeeuisemilight', 20)
 basefont = pygame.font.Font(None, 32)
 
@@ -111,6 +124,7 @@ pygame.mixer.music.set_volume(0.25)
 pygame.mixer.music.play(-1)
 # pygame.mixer.music.load("game_assets_f/sounds/game_theme_music.mp3")
 
+stats = None
 npc_flag = False
 choice = None
 door_open = False
@@ -216,9 +230,9 @@ fruit_button = Button('game_assets_f/Tools/Fruit', 1, 610, 475, (112, 81),
 money_button = Button('game_assets_f/Tools/Money', 1, 100, 395, (90, 64),
                       sound_path='game_assets_f/sounds/money_sound.wav', tag='Money')
 trick_button = Button('game_assets_f/Tools/Trick', 1, 120, 95, (112, 81),
-                      sound_path='game_assets_f/sounds/trick_sound.wav', tag='Trick')
+                      sound_path='game_assets_f/sounds/Lesh_laugh.wav', tag='Trick')
 
-legend_button = Button('game_assets_f/Tools/Legend', 1, 392, 42, (112, 81),
+legend_button = Button('game_assets_f/Tools/Legend', 1, 394, 44, (112, 81),
                        sound_path='game_assets_f/sounds/button_click.wav')
 available_tools = [candy_button]
 tool_sprites.add([candy_button, fruit_button, money_button, trick_button, legend_button])
@@ -231,7 +245,7 @@ outcome = Outcome(X_sound_path='game_assets_f/sounds/wrong_sound.wav',
 # Finish Screen: #######################################################################################################
 finish_screen = fit_bg_dims(game_size, 'game_assets_f/Backgrounds/lvl_bg.png')
 finish_buttons = pygame.sprite.Group()
-finish_button = Button('game_assets_f/Buttons/quit_button', 1, 400, 300, (215, 162),
+finish_button = Button('game_assets_f/Buttons/quit_button', 1, 400, 400, (215, 162),
                        sound_path='game_assets_f/sounds/button_click.wav')
 finish_buttons.add(finish_button)
 
@@ -584,6 +598,7 @@ while running:
                     last_talk_action = 0
                     npc.curr_response = None
                     if npc_flag:
+                        FRIEND = npc.friend_name
                         game_sprites.remove(npc, msg_button)
                         if door_button.is_open:
                             game_enemy.remove([curr_enemy])
@@ -592,6 +607,7 @@ while running:
                             choice = None
                         tut_phase = 10
                         tut_lvl = 0
+                        all_game_time = time.time()
                         pygame.mixer.music.unload()
                         pygame.mixer.music.load("game_assets_f/sounds/after_tut_music.mp3")
                         pygame.mixer.music.set_volume(0.25)
@@ -645,7 +661,7 @@ while running:
                                     game_enemy.remove([curr_enemy])
                                     door_button.is_open = not door_button.is_open
                                     knocked = False
-                                    tut_accumulative.append(time.time() - tut_ts)  # For the learning curve
+                                    tut_accumulative.append(round(time.time() - tut_ts, 2))  # For the learning curve
                                     ts = time.time()
 
                             elif not door_button.is_open and time.time() - ts > 1:
@@ -721,15 +737,19 @@ while running:
                                 answered_correctly.append(new_outcome.right)
                                 game_enemy.remove([curr_enemy])
                                 door_button.is_open = not door_button.is_open
-                                reaction_times.append(time.time() - perf_ts)  # For the learning curve
+                                reaction_times.append(round(time.time() - perf_ts, 2))  # For the learning curve
                                 ts = time.time()
                                 knocked = False
                                 if tut_lvl > len(game_enemies) - 1:
                                     curr_screen = finish_screen
                                     acc = ear.accuracy(answered_correctly)
-                                    time = ear.avg_time(reaction_times)
-                                    ear.report_performance_mail(acc, time, sandbox_approaches, tut_accumulative,
-                                                                answered_correctly, chosen_npc, FRIEND)
+                                    times = ear.avg_time(reaction_times)
+                                    score = score(answered_correctly, reaction_times)
+                                    stats = f"Accuracy: {10*acc}/10, " \
+                                            f"Time: {round(time.time() - all_game_time, 2)} secs, Score: {score}\n"\
+                                            f"GOOD JOB!Remember your name is {FRIEND} when filling the survey!\n"\
+                                            f"PRESS K TO QUIT"
+                                    break
                             elif not door_button.is_open and time.time() - ts > 1:
                                 door_button.is_open = not door_button.is_open
                                 door_button.sound.play()
@@ -742,7 +762,7 @@ while running:
                     player.update_delts(event, down=False)
 
             update_frame(player, None, game_sprites, tool_sprites, core_surface, text_window, msg_texts,
-                         text_sprites, door_button)
+                         text_sprites, door_button, stats=stats)
 
     elif curr_screen == legend_screen:
         visited_legend = True
@@ -765,6 +785,8 @@ while running:
                 if event.key == pygame.K_k:
                     finish_button.set_hovered()
                     finish_button.sound.play()
+                    ear.report_performance_mail(acc, times, sandbox_approaches, tut_accumulative,
+                                                answered_correctly, chosen_npc, FRIEND)
                     running = False
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_k:

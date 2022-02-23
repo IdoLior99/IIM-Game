@@ -1,7 +1,9 @@
 # import smtplib, ssl
 # from email.mime.text import MIMEText
 # from email.mime.multipart import MIMEMultipart
+#import keyring
 import yagmail
+import csv
 
 
 def send_mail(subject, msg, who):
@@ -16,8 +18,9 @@ def send_mail(subject, msg, who):
         contents=msg,
     )
 
+
 def send_mail_csv(subject, msg, results_csv, who):
-    my_password = None  # TODO: find out the password
+    my_password = "ToTResMail00"
     mail_add = "eldarnirpersonal@gmail.com"
     rec_mail = f"eldarnirpersonal+{who}@gmail.com"
     yagmail.register(mail_add, my_password)
@@ -28,6 +31,7 @@ def send_mail_csv(subject, msg, results_csv, who):
         contents=msg,
         attachments=results_csv,
     )
+
 # def send_mail(subject, msg, who):
 #     sender_email = "eldarnirpersonal@gmail.com"
 #     receiver_email = f"eldarnirpersonal+{who}@gmail.com"
@@ -50,22 +54,34 @@ def send_mail_csv(subject, msg, results_csv, who):
 
 
 def accuracy(lst):
-    return sum(lst) / len(lst)
+    return round(sum(lst)/len(lst), 2)
 
 
 def avg_time(lst):
-    return sum(lst) / len(lst)
+    return round(sum(lst)/len(lst), 2)
 
 
+def prep_csv(acc, time, eng, tut, ans, NPC_type, player_id):
+    with open('stats.csv', 'w', newline='') as file:
+        fieldnames = ['Player', 'NPC', 'Answers', 'Accuracy', 'Time', 'Tutorial', 'Engagement']
+        writer = csv.DictWriter(file, fieldnames=fieldnames)
+
+        writer.writerow({'Player': player_id, 'NPC': NPC_type, 'Answers': ans, 'Accuracy': acc, 'Time': time,
+                         'Tutorial': tut, 'Engagement': eng})
+
+
+# TODO: fix eng for specific NPC types
 def report_performance_mail(acc, time, eng, tut, ans, NPC_type, player_id):
-    msg = f"Who: {player_id} \
-            NPC: {NPC_type} \
-            Answers: {ans} \
-            Accuracy: {acc} \
-            Time: {time} \
-            Tutorial stats: {tut} \
-            NPC engagement: {eng} \
+    msg = f"Who: {player_id}\n \
+            NPC: {NPC_type}\n \
+            Answers: {ans}\n \
+            Accuracy: {acc}\n \
+            Time: {time}\n \
+            Tutorial stats: {tut}\n \
+            NPC engagement: {eng}\n \
             "
     # TODO: try adding empty csv to exe and sending the data in the csv through mail.
     subject = f"{player_id}'s Statistics"
-    send_mail(subject, msg, player_id)
+    prep_csv(acc, time, eng, tut, ans, NPC_type, player_id)
+    #send_mail(subject, msg, player_id)
+    send_mail_csv(subject, msg, "stats.csv", player_id)
