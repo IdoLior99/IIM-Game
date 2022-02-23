@@ -45,79 +45,20 @@ def border_check(game_dims, p_coords, player_size):
     return p_coords
 
 
-def npc_talk(npc, msg_button, game_sprites, player, tut_phase, resp_conds, resp_texts, event):
-    """
-    Determines what the npc should say next (if anything at all)
-    :param tut_phase: How far into the tutorial are we
-    :param resp_conds: Various conditions for condition-based repsonses
-    :param resp_texts: Various responses incasae said condition is met
-    :param event: in event.get.
-    :return: msg_texts - text to be said by the npc.
-    """
-    if npc.text_i != tut_phase:
-        npc.text_i = tut_phase
-    texts = npc.texts[npc.text_i]
-    msg_texts = ""
-    # Needed if a response is script-dependant.
-    action = 0  # 0 == didn't talk, 1 == scripted talking, 2 == responding, 3 == scripted message done, 4 == response message done
-    # Can only respond once, looks for the first response condition
-    resp_i = np.where(resp_conds)[0]
-    resp_cond = resp_conds[resp_i[0]] if resp_i.size else False
-    if resp_cond or npc.curr_response:  # Responce
-        if not npc.is_talking:
-            if resp_cond:  # Npc should respond to something rn.
-                npc.is_talking = True
-                npc.curr_response = textfont.render(resp_texts[resp_i[0]], 1, (0, 0, 0))
-                msg_texts = textfont.render(resp_texts[resp_i[0]], 1, (0, 0, 0))
-                action = 2
-
-        else:  # npc is already talking
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_l:  # l was pressed to advance
-                next_button.set_hovered()
-                next_button.sound.play()
-                npc.is_talking = False  # Responses are exclusively 1-panel
-                npc.curr_response = None
-                action = 4
-            else:  # Frame idle
-                msg_texts = npc.curr_response
-                action = 2
-
-
-    else:  # Scripted talk
-        if not npc.is_talking:
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_l:  # Npc should start with a scripted message
-                if msg_button in game_sprites and msg_button.coll_check(player.rect.center, x_offset=50, y_offset=80):
-                    msg_button.set_hovered()
-                    msg_button.sound.play()
-                    npc.is_talking = True
-                    msg_texts = textfont.render(texts[npc.subtext_i], 1, (0, 0, 0))
-                    action = 1
-        else:  # npc is already talking
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_l:  # l was pressed to advance
-                next_button.set_hovered()
-                next_button.sound.play()
-                if msg_button in game_sprites:
-                    npc.subtext_i += 1
-                    if npc.subtext_i >= len(texts):
-                        npc.is_talking = False
-                        npc.text_i += 1
-                        npc.subtext_i = 0
-                        msg_button.set_released()
-                        game_sprites.remove(msg_button)
-                        action = 3
-            else:
-                msg_texts = textfont.render(texts[npc.subtext_i], 1, (0, 0, 0))
-                action = 1
-
-    return msg_texts, action
-
-
 def knock_on_door(cond, knocked):
     if cond:
         door_button.set_hovered()
         knock_sound.play()
         knocked = True
     return knocked
+
+
+def adj_draw(msg_texts, core_surface):
+    texts = msg_texts.splitlines()
+    for i, text in enumerate(texts):
+        msg_text = textfont.render(text, 1, (0, 0, 0))
+        core_surface.blit(msg_text, (75, 440 + i * 20))
+
 
 def update_frame(player, npc, game_sprites, tool_sprites, core_surface, text_window, msg_texts, text_sprites, door):
     player.move_player()
@@ -126,8 +67,8 @@ def update_frame(player, npc, game_sprites, tool_sprites, core_surface, text_win
         npc.rect.center = border_check(game_size, npc.rect.center, 32)
     player.rect.center = border_check(game_size, player.rect.center, 32)
     if door.is_open:
-        core_surface.blit(title_window, (420, 25))
-        core_surface.blit(enemy_title, (435, 45))
+        core_surface.blit(title_window, (430, 43))
+        core_surface.blit(enemy_title, (447, 63))
     tool_sprites.draw(core_surface)
     tool_sprites.update()
     game_enemy.draw(core_surface)
@@ -138,7 +79,7 @@ def update_frame(player, npc, game_sprites, tool_sprites, core_surface, text_win
     if npc and npc.is_talking:
         core_surface.blit(noopcie_pic, (20, 265))
         core_surface.blit(text_window, (0, 300))
-        core_surface.blit(msg_texts, (75, 440))
+        adj_draw(msg_texts, core_surface)
         text_sprites.draw(core_surface)
         text_sprites.update()
 
@@ -150,7 +91,7 @@ core_surface, main_menu = game_setup(game_size, 'Tomidos project', 'game_assets_
                                      'game_assets_f/Backgrounds/mm_bg.png')
 text_window = pygame.image.load('game_assets_f/text_window.PNG')
 text_window = pygame.transform.smoothscale(text_window, [825, 400])  # Changes image dims
-title_window = pygame.transform.smoothscale(text_window, [250, 70])  # Changes image dims
+title_window = pygame.transform.smoothscale(text_window, [320, 70])  # Changes image dims
 textfont = pygame.font.SysFont('leelawadeeuisemilight', 20)
 basefont = pygame.font.Font(None, 32)
 
@@ -163,6 +104,13 @@ curr_screen = main_menu
 clock = pygame.time.Clock()
 pop_sound = pygame.mixer.Sound('game_assets_f/sounds/msg_pop.flac')
 knock_sound = pygame.mixer.Sound('game_assets_f/sounds/door_knock_sound.mp3')
+
+# MUSIC
+pygame.mixer.music.load("game_assets_f/sounds/menu_to_tutorial_music.wav")
+pygame.mixer.music.set_volume(0.25)
+pygame.mixer.music.play(-1)
+# pygame.mixer.music.load("game_assets_f/sounds/game_theme_music.mp3")
+
 npc_flag = False
 choice = None
 door_open = False
@@ -179,6 +127,9 @@ already_named = False
 game_enemy = pygame.sprite.Group()
 # TODO: use For loop
 single_opts = ["Princess", "Robot", "Farmer", "Cookie Monster", "Tooth", "Businessman", "Ghost"]
+ghost_opts = []
+for g_comb in single_opts[:-1]:
+    ghost_opts.append(g_comb + "-Ghost")
 Princess = Enemy("game_assets_f/game_enemies/Princess", 500, 190, (215, 162), "Princess", img_format='png')
 Robot = Enemy("game_assets_f/game_enemies/Robot", 500, 190, (215, 162), "Robot", img_format='png')
 Farmer = Enemy("game_assets_f/game_enemies/Farmer", 500, 190, (215, 162), "Farmer", img_format='png')
@@ -235,9 +186,9 @@ game_sprites = pygame.sprite.Group()
 player = Player('game_assets_f/player', 0, 370, 480, (97, 100), 2, img_format='PNG')
 npc_types = ["Favorite", "Hyper", "Aloof"]
 random_type = randrange(0, 3)
-#random_type = 2
+# random_type = 2
 chosen_npc = npc_types[random_type]
-#chosen_npc = 'Aloof'
+# chosen_npc = 'Aloof'
 noopcie_pic = pygame.image.load('game_assets_f/Noopcie/{}/Noopcie_{}.png'.format(chosen_npc, random_type + 1))
 noopcie_pic = pygame.transform.smoothscale(noopcie_pic, [214, 162])
 FRIEND = "FRIEND"
@@ -247,6 +198,8 @@ msg_button = Msg_Button('game_assets_f/Buttons/msg_button', 1, 400, 200, (100, 7
                         sound_path='game_assets_f/sounds/button_click.wav')
 text_sprites = pygame.sprite.Group()
 next_button = Button('game_assets_f/Buttons/next_button', 1, 720, 540, (107, 81),
+                     sound_path='game_assets_f/sounds/button_click.wav')
+game_button = Button('game_assets_f/Buttons/next_button', 1, 720, 540, (107, 81),
                      sound_path='game_assets_f/sounds/button_click.wav')
 door_button = Door('game_assets_f/Buttons/door_button', 1, 500, 190, (300, 185),
                    sound_path='game_assets_f/sounds/door_open.wav')
@@ -259,20 +212,20 @@ tool_sprites = pygame.sprite.Group()
 candy_button = Button('game_assets_f/Tools/Candy', 1, 220, 175, (112, 81),
                       sound_path='game_assets_f/sounds/candy_sound.wav', tag='Candy')
 fruit_button = Button('game_assets_f/Tools/Fruit', 1, 610, 475, (112, 81),
-                      sound_path='game_assets_f/sounds/button_click.wav', tag='Fruit')
+                      sound_path='game_assets_f/sounds/fruit_sound.wav', tag='Fruit')
 money_button = Button('game_assets_f/Tools/Money', 1, 100, 395, (90, 64),
                       sound_path='game_assets_f/sounds/money_sound.wav', tag='Money')
 trick_button = Button('game_assets_f/Tools/Trick', 1, 120, 95, (112, 81),
-                      sound_path='game_assets_f/sounds/button_click.wav', tag='Trick')
+                      sound_path='game_assets_f/sounds/trick_sound.wav', tag='Trick')
 
-legend_button = Button('game_assets_f/Tools/Legend', 1, 500, 40, (112, 81),
+legend_button = Button('game_assets_f/Tools/Legend', 1, 392, 42, (112, 81),
                        sound_path='game_assets_f/sounds/button_click.wav')
 available_tools = [candy_button]
 tool_sprites.add([candy_button, fruit_button, money_button, trick_button, legend_button])
 
 # Game Answer outcome
 # TODO: find sound for wrong answer and put it in X_sound_path
-outcome = Outcome(X_sound_path='game_assets_f/sounds/button_click.wav',
+outcome = Outcome(X_sound_path='game_assets_f/sounds/wrong_sound.wav',
                   V_sound_path='game_assets_f/sounds/cheering_ppl.wav')
 
 # Finish Screen: #######################################################################################################
@@ -368,6 +321,7 @@ while running:
         core_surface.blit(text_surface, (text_input_rect.x + 5, text_input_rect.y + 5))
 
     elif curr_screen == pause_screen:
+        pygame.mixer.music.pause()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -382,6 +336,7 @@ while running:
                 if event.key == pygame.K_k:
                     p_res_button.set_released()
                     curr_screen = level_0
+                    pygame.mixer.music.unpause()
                 elif event.key == pygame.K_l:
                     p_quit_button.set_released()
                     running = False
@@ -402,6 +357,10 @@ while running:
                     cont_button.set_released()
                     start_time = time.time()
                     curr_screen = level_0
+                    pygame.mixer.music.unload()
+                    pygame.mixer.music.load("game_assets_f/sounds/game_theme_music.mp3")
+                    pygame.mixer.music.set_volume(0.25)
+                    pygame.mixer.music.play()
         legend_buttons.draw(core_surface)
         legend_buttons.update()
 
@@ -422,7 +381,8 @@ while running:
                     player.deltas = [0, 0]
                 phase_0_if = done_talking_flag == 3 and not knocked
                 msg_texts, last_talk_action = npc.npc_talk(msg_button, game_sprites, player, tut_phase,
-                                                       [phase_0_if], [npc.resps["knock"]], event, next_button, textfont)
+                                                           [phase_0_if], [npc.resps["knock"]], event, next_button,
+                                                           textfont)
                 if done_talking_flag != 3:
                     done_talking_flag = last_talk_action
                 if event.type == pygame.KEYDOWN:
@@ -478,10 +438,13 @@ while running:
                     knocked = True
                 if event.type == pygame.QUIT:
                     running = False
+                cond = door_button.is_open and event.type == pygame.KEYDOWN and event.key == pygame.K_k \
+                       and door_button.coll_check(player.rect.center)
                 msg_texts, last_talk_action = npc.npc_talk(msg_button, game_sprites, player, tut_phase,
-                                        [new_outcome.wrong, new_outcome.right],
-                                        [npc.resps['try'], npc.npc_good()], event, next_button, textfont)
-                if last_talk_action == 4: #Finished responding
+                                                           [new_outcome.wrong, new_outcome.right, not choice and cond],
+                                                           [npc.resps['try'], npc.npc_good(), npc.resps["nothing"]],
+                                                           event, next_button, textfont)
+                if last_talk_action == 4:  # Finished responding
                     new_outcome.reset()
                     last_talk_action = 0
                     done_talking_flag = 0
@@ -502,6 +465,7 @@ while running:
                         player.update_delts(event)
                     if event.key == pygame.K_ESCAPE:
                         curr_screen = pause_screen
+
                     if event.key == pygame.K_k:
                         for button in tool_sprites:
                             if button in available_tools:
@@ -528,6 +492,7 @@ while running:
                                     if tut_phase == 8:
                                         sandbox_time = time.time()
                                         game_sprites.add(msg_button)
+                                        # game_sprites.add(game_button) # Physical N button not really necessary
                                         last_talk_action, done_talking_flag = 0, 0
                                         break
                                     if tut_phase == 4:
@@ -545,10 +510,6 @@ while running:
                                 game_enemy.add([curr_enemy])
                                 tut_lvl += 1
                                 enemy_title = textfont.render(curr_enemy.title, 1, (0, 0, 0))
-
-                            else:
-                                # TODO: NPC says "First pick an item"
-                                pass
 
                     # if event.key == pygame.K_l:
                     #     msg_texts = npc_talk(npc, msg_button, game_sprites, player, tut_phase)
@@ -572,9 +533,9 @@ while running:
                 if event.type == pygame.QUIT:
                     running = False
                 msg_texts, legend_last_talk_action = npc.npc_talk(msg_button, game_sprites, player, tut_phase,
-                                                           [legend_const_action == 3 and visited_legend],
-                                                           [npc.resps['legend']], event, next_button,
-                                                           textfont)
+                                                                  [legend_const_action == 3 and visited_legend],
+                                                                  [npc.resps['legend']], event, next_button,
+                                                                  textfont)
                 if legend_const_action != 3:
                     legend_const_action = legend_last_talk_action
                 if legend_button.coll_check(player.rect.center):
@@ -604,19 +565,37 @@ while running:
         elif tut_phase == 8:
 
             for event in pygame.event.get():
+                ghost_cond = curr_enemy.title in ghost_opts and event.type == pygame.KEYDOWN and event.key == pygame.K_l\
+                            and done_talking_flag == 3
+                base_cond = curr_enemy.title in single_opts and event.type == pygame.KEYDOWN and event.key == pygame.K_l\
+                            and done_talking_flag == 3
+                hybrid_cond = curr_enemy.title not in single_opts and curr_enemy.title not in ghost_opts \
+                              and event.type == pygame.KEYDOWN and event.key == pygame.K_l and done_talking_flag == 3
                 msg_texts, last_talk_action = npc.npc_talk(msg_button, game_sprites, player, tut_phase,
-                                        [npc_flag, new_outcome.wrong, new_outcome.right],
-                                        [npc.resps['done'], npc.resps['try'], npc.npc_good()], event, next_button, textfont)
+                                                           [npc_flag, new_outcome.wrong, new_outcome.right, ghost_cond,
+                                                            base_cond, hybrid_cond],
+                                                           [npc.resps['done'], npc.resps['try'], npc.npc_good(),
+                                                            npc.resps["ghost"], npc.resps["base"], npc.resps["hybrid"]],
+                                                           event, next_button, textfont)
                 if last_talk_action == 3:
                     done_talking_flag = last_talk_action
-                if last_talk_action == 4: #Finished respondings
+                if last_talk_action == 4:  # Finished respondings
                     new_outcome.reset()
                     last_talk_action = 0
                     npc.curr_response = None
                     if npc_flag:
                         game_sprites.remove(npc, msg_button)
+                        if door_button.is_open:
+                            game_enemy.remove([curr_enemy])
+                            door_button.is_open = not door_button.is_open
+                            knocked = False
+                            choice = None
                         tut_phase = 10
                         tut_lvl = 0
+                        pygame.mixer.music.unload()
+                        pygame.mixer.music.load("game_assets_f/sounds/after_tut_music.mp3")
+                        pygame.mixer.music.set_volume(0.25)
+                        pygame.mixer.music.play()
                         break
                 if npc.is_talking:
                     player.deltas = [0, 0]
@@ -644,7 +623,7 @@ while running:
                     if event.key == pygame.K_n:
                         npc_flag = True
                         sandbox_time = time.time() - sandbox_time
-                        #break
+                        # break
                     if event.key == pygame.K_k:
                         for button in tool_sprites:
                             if button in available_tools:
@@ -681,6 +660,15 @@ while running:
 
                     if event.key == pygame.K_l:
                         sandbox_approaches += 1
+                        # if curr_enemy.title in ghost_opts and event.key == pygame.K_l and event.type == pygame.KEYDOWN:
+                        #     # TODO: NPC responds with NPC.resps["ghost"]
+                        #     pass
+                        # elif curr_enemy.title in single_opts:
+                        #     # TODO: NPC responds with NPC.resps["base"]
+                        #     pass
+                        # else:
+                        #     # TODO: NPC responds with NPC.resps["hybrid"]
+                        #     pass
 
                 if event.type == pygame.KEYUP:
                     if not npc.is_talking:
@@ -696,7 +684,7 @@ while running:
         else:  # Not tutorial
             for event in pygame.event.get():
                 if time.time() - ts > 1 and not knocked:
-                    pop_sound.play()
+                    knock_sound.play()
                     knocked = True
                 if event.type == pygame.QUIT:
                     running = False
@@ -733,7 +721,7 @@ while running:
                                 answered_correctly.append(new_outcome.right)
                                 game_enemy.remove([curr_enemy])
                                 door_button.is_open = not door_button.is_open
-                                #reaction_times.append(time.time() - perf_ts)  # For the learning curve
+                                reaction_times.append(time.time() - perf_ts)  # For the learning curve
                                 ts = time.time()
                                 knocked = False
                                 if tut_lvl > len(game_enemies) - 1:

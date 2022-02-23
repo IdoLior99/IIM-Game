@@ -10,8 +10,6 @@ import numpy as np
 
 ################################################# NPC types ############################################################
 
-FRIEND = "friend"
-
 
 def npc_texter(npc_type, FRIEND):
     texts = []
@@ -19,18 +17,18 @@ def npc_texter(npc_type, FRIEND):
         # Favorite NPC:
         texts.append([f"Hi {FRIEND}! Welcome to Trick-or-Treat!",
                       "My name is Noopcie and I'll help you get things started",
-                      "In this town, people let you know what they want to receive by their costume. You'll see",
+                      "In this town, people let you know what they want to receive by their costume.\nYou'll see",
                       "Remember, whenever you need my help, come over to me and press L"])
 
         texts.append(["It's Cookie Monster! he might want a cookie, don't you think?",
                       "Go to the candy jar and press K to take a candy",
                       "Then, go to the door and give Cookie Monster a candy (by pressing K)"])
 
-        texts.append(["Our next visitor is a princess. princesses like candies but they also like fruits",
+        texts.append(["Our next visitor is a princess. \nprincesses like candies but they also like fruits",
                       "Give her either of them."])
 
         texts.append(
-            ["Our next visitor is a ghost. He could've been any of the other costumes when he was alive right?",
+            ["Our next visitor is a ghost.\nHe could've been any of the other costumes when he was alive right?",
              "That's why it doesn't mind getting candy, fruit or money. Give it either of them"])
 
         texts.append([f"There are a few more visitors that may appear with different preferences.",
@@ -39,8 +37,8 @@ def npc_texter(npc_type, FRIEND):
                       "Go to the legend and press K to read it"])
 
         texts.append([f"So this one is a hybrid costume.",
-                      "People with hybrid costumes want to get something that both original costumes would like.",
-                      "For Example, Princesses like candies and fruits. Farmers like both fruit and money."
+                      "People with hybrid costumes want something that both original costumes would like.",
+                      "For Example, \nPrincesses like candies and fruits. Farmers like both fruit and money."
                       "What can we give them that they will both like?"])
 
         texts.append([f"Here's another hybrid, let's see if you got this"])
@@ -48,94 +46,105 @@ def npc_texter(npc_type, FRIEND):
         # texts.append(
         #     ["Lastly, let's see you handle this hybrid. I'll be here if you need help, just come over and press L"])
 
-        texts.append(["This one's weird huh? Because this hybrid isn't a regular one. if both parts of the hybrid don't"
-                      "share any preference, there's nothing you can give it. And if we can't TREAT them, we TRICK them."
+        texts.append(["This one's weird huh? Because this hybrid isn't a regular one. "
+                      "\nIf both parts of the hybrid don't share any preference, "
+                      "\nthere's nothing you can give it.",
+                      "And if we can't TREAT them, we TRICK them."
                       "Go take the water gun off the wall and TRICK this hybrid."])
 
-        texts.append(["So the tutorial is now over. You can continue practicing for as long as you like"
-                      "and then continue to the real game (by pressing N).",
-                      "During the real game, you'll need to work fast. Your score will be based on both time and accuracy.",
+        texts.append(["So the tutorial is now over but you can continue practicing for as long as you like"
+                      "\nWhen you want to continue to the real game, press N.",
+                      "During the real game, you'll need to work fast."
+                      "\nYour score will be based on both time and accuracy.",
                       "I'll stay here to help when you need me until you go to the game."
-                      " after that you're on your own. Hope I helped!"])
+                      "\nAfter that you're on your own. Hope I helped!"])
 
         resps = dict()
+        resps["nothing"] = "First pick one of the options to give, then come back and give it :)"
         resps["legend"] = "Cool, The legend will always be available for you in case you forget something."
         resps[
-            "knock"] = "Heard that knock on the door? Our first visitor is here. Go to the door and press K to open it."
+            "knock"] = "Heard that knock on the door? Our first visitor is here. " \
+                       "\nGo to the door and press K to open it."
         resps["yas"] = [f"Great {FRIEND}!", "Good!", "Great work!", f"Good Job {FRIEND}!", "Excellent!"]
-        resps["try"] = "You might want to try something else."
-        resps["hybrid"] = "What could we give both if they were separated? if there's no such thing it's kinda TRICKy."
+        resps["try"] = "You might want to try something else"
+        resps["hybrid"] = "What could we give both if they were separated? " \
+                          "\nif there's no such thing it's kinda TRICKy."
         resps["base"] = "This one is easy. you got this LEGEND."
-        resps["ghost"] = "Ghosts have no effect on our lives don't you think? how ghosts effect other visitors?"
-        resps["done"] = "Alright I'm out, attic zombie needs my help, good luck with this batch recruit!"
+        resps["ghost"] = "Ghosts have no effect on our lives don't you think? " \
+                         "\nHow ghosts affect other visitors?"
+        resps["done"] = f"Alright I'm out, attic zombie needs my help. Good luck!"
 
     elif npc_type == "Hyper":
         # HYPER NPC:
         texts.append([f"Hello {FRIEND}!", "First time on Halloween door duty huh?",
                       "No Worries, My name is Noopcie and I'll help you getting started",
-                      "In this town, people let you know what they want to receive with their costume choice."
-                      " You'll see what I mean", "Anyways, whenever you need help,come over to me and press L"])
+                      "In this town,"
+                      "\npeople let you know what they want to receive with their costume choice."
+                      "\nYou'll see what I mean", "Anyways,\nwhenever you need help,come over to me and press L"])
 
-        texts.append([f"It's Cookie Monster! Everyone knows what the Cookie Monster likes. Cookies!",
+        texts.append([f"It's Cookie Monster!\nEveryone knows what the Cookie Monster likes. Cookies!",
                       f"Go to the candy jar and press K to take a candy"])
 
         #texts.append([f"Great, now go to the door and give Cookie Monster a candy (by pressing K)"])
 
         texts.append([f"Our next visitor is a princess.",
-                      f"Princesses like Candy too but they also like fruits. Give her either of them."])
+                      f"Princesses like Candy too but they also like fruits.\nGive her either of them."])
 
         texts.append([f"SPOOOOKY...", "Not really! this ghost is CUTE",
-                      "In fact it's so cute that it doesn't mind getting candy, fruit or money. Give it either of them"])
+                      "In fact it's so cute that it doesn't mind getting candy, fruit or money."
+                      "\nGive it either of them"])
 
         texts.append([f"There are a few more visitors that may appear with different preferences.",
                       "To make sure you know all these preferences, I hung a legend for you on the wall.",
                       "Go to the legend and press K to read it"])
 
         texts.append([f"So this one is a hybrid costume.",
-                      "People with hybrid costumes want to get something that both original costumes would like.",
-                      "For Example, Princesses like candies and fruits. Farmers like both fruit and money."
-                      "What can we give them that they will both like?"])
+                      "People with hybrid costumes want something that both original costumes would like.",
+                      "\nFor Example, Princesses like candies and fruits. Farmers like both fruit and money."
+                      "\nWhat can we give them that they will both like?"])
 
         texts.append([f"Here's another hybrid, let's see if you got this"])
         # texts.append(
         #     [f"Lastly, let's see you handle this hybrid. I'll be here if you need help, just come over and press L"])
 
         texts.append(
-            [f"Don't know what to do huh? Because this hybrid is a special one! if both parts of the hybrid don't"
-             f"share any preference, there's nothing you can give it.",
+            [f"Don't know what to do huh? Because this hybrid is a special one!"
+             f"\nIf both parts of the hybrid don't share any preference, you can't give anything.",
              "It means they're messing with you. And if we can't TREAT them, we TRICK them."
-             "Go take the water gun off the wall and give them a lesson."])
+             "\nGo take the water gun off the wall and give them a lesson."])
 
-        texts.append([f"Alright, the tutorial is now over. You can continue practicing for as long as you like"
-                      f"and then continue to the real game (by pressing N).",
+        texts.append(["Alright, the tutorial is now over. You can continue practicing for as long as you like"
+                      "and then continue to the real game (by pressing N).",
                       "It's important to note that during the real game, you'll need to work fast."
                       " Your score will be based on both time and accuracy.",
                       f"I'll stay here to help when you need me until you get to the next level."
                       f" after that you're on your own. Hope I helped you {FRIEND}!"])
 
         resps = dict()
+        resps["nothing"] = f"We can't come empty-handed {FRIEND}, We got to choose something to give first."
         resps[
-            "legend"] = "Good! The legend will always be available for you in case you forget. Let's see who comes now"
+            "legend"] = "Good! The legend will always be available for you in case you forget.\nLet's see who comes now"
         resps["knock"] = "Someone knocked on the door! Let's find out who. Press K to open the door"
         resps["yas"] = [f"Great Job {FRIEND}!", "AMAZING!", "Great! You're really starting to get this",
                         f"Good Job {FRIEND}!", "Excellent!!!"]
-        resps["try"] = "Not this one Pal. Try something else you can do this!"
-        resps["hybrid"] = "What could we give both if they were separated? if there's no such thing it's kinda TRICKy."
+        resps["try"] = "OOPS, Not this one Pal. Try something else you can do this!"
+        resps["hybrid"] = "What could we give both if they were separated?\nif there's no such thing it's kinda TRICKy."
         resps["base"] = "You don't need my help with this one. you are a LEGEND."
-        resps["ghost"] = "Funny thing about ghosts, Whether they exist or NOT, EVERYTHING STAYS THE SAME in life."
-        resps["done"] = "Alright I'm out, attic zombie needs my help, good luck with this batch recruit!"
+        resps["ghost"] = "Funny thing about ghosts, \nWhether they exist or NOT, EVERYTHING STAYS THE SAME in life."
+        resps["done"] = f"Alrighty I gotta go! attic zombie needs my help. Good luck {FRIEND}!"
 
     else:
         # Aloof NPC:
-        texts.append(["Hi, my name is Noopcie and I'm here to help you learn how Trick or Treat works around here",
-                      "In this town, people's costumes signify what they want you to give them, you'll see.",
+        texts.append(["Hi, my name is Noopcie.\nI'm here to help you learn how Trick or Treat works around here",
+                      "In this town,"
+                      "\npeople's costumes signify what they want you to give them, you'll see later",
                       "If you need help, come over to me and press L"])
         texts.append(["Your first visitor is Cookie Monster and he likes cookies.",
                       "Go to the candy jar and press K to take a candy"])
 
         #texts.append(["Good, now go to the door and give it to him (by pressing K)"])
         texts.append(["Your next visitor is a princess.",
-                      "Princesses like candy and also fruits. You can give her either"])
+                      "Princesses like candy and also fruits. Give her either"])
 
         texts.append(["This visitor is a ghost. Ghosts don't mind getting candy, fruit or money. Give it either"])
 
@@ -145,7 +154,7 @@ def npc_texter(npc_type, FRIEND):
 
         texts.append(["This one is a hybrid costume.",
                       "Hybrid costumes want to get something that satisfies both original costumes.",
-                      "Princesses like candies and fruits. Farmers like both fruit and money. What can ypu give both?"])
+                      "Princesses like candies and fruits. Farmers like both fruit and money. What can you give both?"])
         texts.append(["Try to handle this one on your own."])
 
         #texts.append(["Lastly, let's see you handle this one. If you need help, come over and press L"])
@@ -155,22 +164,23 @@ def npc_texter(npc_type, FRIEND):
                       "If you can't TREAT them, TRICK them. Go take the water gun of the wall"
                       "Then go to the visitor and press K to shoot"])
 
-        texts.append(["The tutorial is now over. You can continue practicing for as long as you want"
-                      "and then continue to the real game (by pressing N).",
-                      "During the real game, you'll need to work fast. "
-                      "Your score will be based on both time and accuracy.",
-                      "I'm still here until you get to the next level if you need help. "
-                      "After that you're on your own. Good Luck!"])
+        texts.append(["The tutorial is now over. You can continue practicing for as long as you want."
+                      "\nWhen you want to continue to the real game press N.",
+                      "During the real game, you'll need to work fast."
+                      "\nYour score will be based on both time and accuracy.",
+                      "I'm still here until you get to the next level if you need help."
+                      "\nAfter that you're on your own. Good luck"])
 
         resps = dict()
+        resps["nothing"] = "You can't give nothing... First pick one of the options."
         resps["legend"] = "Okay, The legend will always be available for you in case you forget."
         resps["knock"] = "Go to the door and press K to open it"
-        resps["yas"] = ["Good", "cool", "Great Job", "Great"]
+        resps["yas"] = ["Good", "Cool", "Okay"]
         resps["try"] = "This one's wrong. Try again."
         resps["hybrid"] = "What can you give this hybrid? Can you give them both the same thing? else it's TRICK."
         resps["base"] = "Remember you can always use the LEGEND."
         resps["ghost"] = "Ghost hybrids are interesting. Think about the way they act."
-        resps["done"] = "Alright I'm out, attic zombie needs my help, good luck with this batch recruit!"
+        resps["done"] = "Alright, attic zombie needs my help, Don't let me down!"
 
     return texts, resps
 
@@ -409,8 +419,8 @@ class NPC(Animated_Sprite):
             if not self.is_talking:
                 if resp_cond:  # Npc should respond to something rn.
                     self.is_talking = True
-                    self.curr_response = textfont.render(resp_texts[resp_i[0]], 1, (0, 0, 0))
-                    msg_texts = textfont.render(resp_texts[resp_i[0]], 1, (0, 0, 0))
+                    self.curr_response = resp_texts[resp_i[0]]
+                    msg_texts = resp_texts[resp_i[0]]
                     action = 2
 
             else:  # npc is already talking
@@ -432,7 +442,7 @@ class NPC(Animated_Sprite):
                         msg_button.set_hovered()
                         msg_button.sound.play()
                         self.is_talking = True
-                        msg_texts = textfont.render(texts[self.subtext_i], 1, (0, 0, 0))
+                        msg_texts = texts[self.subtext_i]
                         action = 1
             else:  # npc is already talking
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_l:  # l was pressed to advance
@@ -448,10 +458,11 @@ class NPC(Animated_Sprite):
                             game_sprites.remove(msg_button)
                             action = 3
                 else:
-                    msg_texts = textfont.render(texts[self.subtext_i], 1, (0, 0, 0))
+                    msg_texts = texts[self.subtext_i]
                     action = 1
 
         return msg_texts, action
+
     def update(self):
         if self.dx < 0:
             self.curr_dir = 1

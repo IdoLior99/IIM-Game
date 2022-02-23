@@ -50,7 +50,7 @@ def send_mail_csv(subject, msg, results_csv, who):
 
 
 def accuracy(lst):
-    return sum(lst == True) / len(lst)
+    return sum(lst) / len(lst)
 
 
 def avg_time(lst):
