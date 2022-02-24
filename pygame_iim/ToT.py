@@ -97,36 +97,33 @@ def npc_texter(npc_type, FRIEND):
         texts.append([f"Hi {FRIEND}! Welcome to Trick-or-Treat!",
                       "My name is Noopcie and I'll help you get things started.",
                       "In this town, people let you know what they want to receive by their costume.\nYou'll see.",
-                      "Remember, whenever you need my help, come over to me and press L."])
+                      "Remember, whenever you need my help, come over to me and press [L]."])
 
-        texts.append(["It's Cookie Monster! he might want a cookie, don't you think?",
-                      "Go to the candy jar (near the door) and press K to take a candy.",
-                      "Then, go to the door and give Cookie Monster the candy (by pressing K)."])
+        texts.append(["It's Cookie Monster.\nHe might want a cookie, don't you think?",
+                      "Go to the candy jar (near the door) and press [K] to take a candy.",
+                      "Then, go to the door and give Cookie Monster the candy (by pressing [K])."])
 
-        texts.append(["Our next visitor is a princess. \nprincesses like candies but they also like fruits.",
+        texts.append(["Our next visitor is a princess. \nPrincesses like candies but they also like fruits.",
                       "The fruit basket is located in the bottom right corner of the room.",
                       "Give her either of them."])
 
         texts.append(
             ["Our next visitor is a ghost.\nHe could've been any of the other costumes when he was alive right?",
              "That's why it doesn't mind getting candy, fruit or money. Give it either of them."
-             "\nYour wallet is in the bottom left corner of the room."])
+             "\nThe wallet is in the bottom left corner of the room."])
 
         texts.append([f"There are a few more visitors that may appear with different preferences.",
-                      "I hung a LEGEND for you on the wall above the shelf."
+                      "I hung a LEGEND for you on the wall above the left shelf, next to the door."
                       "\nIn it you'll find the different costumes and their preferences in case you forget.",
-                      "Go to the LEGEND (above the shelf) and press K to read it."])
+                      "Go to the LEGEND (above the shelf) and press [K] to read it."])
 
         texts.append([f"So this one is a hybrid costume."
                       f"\nA hybrid costume is a combination of 2 basic costumes.",
                       "People with hybrid costumes want something that both original costumes would like.",
-                      "For Example, \nPrincesses like candies and fruits. Farmers like both fruit and money."
-                      "\nWhat can we give them that they will both like?"])
+                      "You can always check the legend to see what both original costumes like."
+                      "\nWhat can we give them that will satisfy both?"])
 
-        texts.append([f"Here's another hybrid, let's see if you got this."])
-
-        # texts.append(
-        #     ["Lastly, let's see you handle this hybrid. I'll be here if you need help, just come over and press L"])
+        texts.append([f"Here's another hybrid, you got this."])
 
         texts.append(["This one's weird huh? Because this hybrid isn't a regular one."
                       "\nIf both parts of the hybrid don't share any preference, "
@@ -135,43 +132,44 @@ def npc_texter(npc_type, FRIEND):
                       "\nGo take the water gun off the wall (top left) and TRICK this hybrid."])
 
         texts.append(["So the tutorial is now over but you can continue practicing for as long as you like."
-                      "\nWhen you want to continue to the real game, press N.",
+                      "\nWhen you want to continue to the real game, press [N].",
                       "During the real game, you'll need to work fast."
                       "\nYour score will be based on both time and accuracy.",
-                      "I'll stay here to help when you need me until you go to the game."
+                      "I'll stay here to help when you need me until you press [N] to move to the next level."
                       "\nAfter that you're on your own. Hope I helped!"])
 
         resps = dict()
         resps["nothing"] = "First pick one of the options to give, then come back and give it :)"
-        resps["legend"] = "Cool, The legend will always be available for you in case you forget something."
+        resps["legend"] = "Great, The legend will always be available for you in case you forget something."
         resps[
             "knock"] = "Heard that knock on the door? Our first visitor is here. " \
-                       "\nGo to the door and press K to open it."
-        resps["yas"] = [f"Great {FRIEND}!", "Good!", "Great work!", f"Good Job {FRIEND}!", "Excellent!"]
-        resps["try"] = "You might want to try something else pal"
+                       "\nGo to the door and press [K] to open it."
+        resps["yas"] = [f"Great {FRIEND}!", "Good!", "Great work!", f"Good Job {FRIEND}!"]
+        resps["try"] = "You might want to try something else pal."
         resps["hybrid"] = "What could we give both if they were separated? " \
-                          "\nif there's no such thing it's kinda TRICKy."
-        resps["base"] = "This one is easy. you got this LEGEND."
+                          "\nIf there's no such thing it's kinda TRICKy."
+        resps["base"] = "This one is easy. you got this, LEGEND."
         resps["ghost"] = "Ghosts have no effect on our lives don't you think? " \
-                         "\nHow ghosts affect other visitors?"
+                         "\nHow do ghosts affect other visitors?"
         resps["done"] = f"Apparently attic zombie needs my help. I gotta go, Good luck!"
 
     elif npc_type == "Hyper":
         # HYPER NPC:
-        texts.append([f"Hello {FRIEND}!", "First time on Halloween door duty huh?",
-                      "No Worries, My name is Noopcie and I'll help you getting started.",
+        texts.append([f"Hello {FRIEND}!!", "First time on Halloween door duty huh?",
+                      "No Worries, My name is Noopcie and I'll help you get things started.",
                       "In this town,"
-                      "\npeople let you know what they want to receive with their costume choice."
-                      "\nYou'll see what I mean.", "Anyways,\nwhenever you need help,come over to me and press L."])
+                      "\nPeople let you know what they want to receive with their costume choice."
+                      "\nYou'll see what I mean.", "Anyways,\nwhenever you need help,come over to me and press [L]."])
 
         texts.append([f"It's Cookie Monster!\nEveryone knows what the Cookie Monster likes. Cookies!",
-                      f"Go to the candy jar (near the door) and press K to take a candy.",
-                      f"Then go back to the door and press K to give the candy."])
+                      f"Go to the candy jar (near the door) and press [K] to take a candy.",
+                      f"Then go back to the door and press [K] to give the candy."])
 
-        #texts.append([f"Great, now go to the door and give Cookie Monster a candy (by pressing K)"])
+        # texts.append([f"Great, now go to the door and give Cookie Monster a candy (by pressing K)"])
 
-        texts.append([f"Our next visitor is a princess.",
-                      f"Princesses like Candy too but they also like fruits."
+        texts.append([f"Our next visitor is a princess, WOW!!",
+                      "We're in the presence of ROYALTY!!",
+                      f"Princesses like Candy too but they also like fruit."
                       f"\nOur fruit basket is in the bottom right corner of the room."
                       f"\nGive her either of them."])
 
@@ -181,58 +179,67 @@ def npc_texter(npc_type, FRIEND):
                       "\nGive it either of them."])
 
         texts.append([f"There are a few more visitors that may appear with different preferences.",
-                      "To make sure you know all these preferences,"
-                      "\nI hung a legend for you on the wall above the shelf.",
-                      "Go to the legend and press K to read it."])
+                      f"To make sure my good friend {FRIEND} knows all these preferences,",
+                      "I hung a legend for on the wall above the left shelf, next to the door!",
+                      "Go to the legend and press [K] to read it.",
+                      "a LEGEND fitting for a LEGEND like you!"])
 
         texts.append([f"Your first hybrid visitor, that's SO COOL!"
                       f"\nHybrid costumes are combinations of 2 basic costumes.",
                       "People with hybrid costumes want something that both original costumes would like.",
-                      "\nFor Example, Princesses like candies and fruits. Farmers like both fruit and money."
+                      f"Interesting, right super-{FRIEND}?",
+                      "\nFor Example, Princesses like candies and fruits, and Farmers like both fruit and money!"
                       "\nWhat can we give them that they will both like?"])
 
-        texts.append([f"Here's another hybrid, let's see if you got this"])
+        texts.append([f"Here's another hybrid!",
+                      f"You GOT this {FRIEND}!",
+                      "Farmers like both fruit and money while \nthe businessman only likes money!"
+                      f"Go {FRIEND}!!"])
         # texts.append(
         #     [f"Lastly, let's see you handle this hybrid. I'll be here if you need help, just come over and press L"])
 
         texts.append(
-            [f"Don't know what to do huh? Because this hybrid is a special one!"
+            [f"Well this hybrid is a special one!",
+             "Bet you probably already figured it out yourself, right super-{FRIEND}?",
              f"\nIf both parts of the hybrid don't share any preference, you can't give anything.",
-             "It means they're messing with you. And if we can't TREAT them, we TRICK them."
+             "It means they're messing with you. And if we can't TREAT them, we TRICK them!!"
              "\nGo take the water gun off the wall (top left) and give them a lesson."])
 
-        texts.append(["Alright, the tutorial is now over. You can continue practicing for as long as you like.",
+        texts.append(["Alrighty, that marks the end of this tutorial. You can continue practicing for as long ",
+                      "and as much",
+                      "as you like.",
                       "Whenever you feel ready,"
-                      "\nContinue to the real game by pressing N.",
-                      "It's important to note that during the real game, you'll need to work fast."
+                      "\nContinue to the real game by pressing [N].",
+                      "It's important to note that during the real game, you'll need to work FAST."
                       "\nYour score will be based on both time and accuracy.",
-                      f"I'll stay here to help when you need me until you get to the next level."
-                      f"\nAfter that you're on your own. Hope I helped you {FRIEND}!"])
+                      f"I'll stay here to help when you need me until you press [N] to move to the next level.",
+                      f"After that you're on your own. Hope I helped you super-{FRIEND}!"])
 
         resps = dict()
         resps["nothing"] = f"We can't come empty-handed {FRIEND}, We got to choose something to give first."
-        resps["legend"] = "Good! The legend will always be available for you in case you forget." \
-                          "\nLet's see who comes now."
-        resps["knock"] = "Someone knocked on the door! Let's find out who. Press K to open the door."
-        resps["yas"] = [f"Great Job {FRIEND}!", "AMAZING!", "Great! You're really starting to get this.",
-                        f"Good Job {FRIEND}!", "Excellent!!!"]
-        resps["try"] = "OOPS, Not this one Pal. Try something else you can do this!"
-        resps["hybrid"] = "What could we give both if they were separated?\nif there's no such thing it's kinda TRICKy."
-        resps["base"] = "You don't need my help with this one. you are a LEGEND."
-        resps["ghost"] = "Funny thing about ghosts, \nWhether they exist or NOT, EVERYTHING STAYS THE SAME in life."
-        resps["done"] = f"Alrighty I gotta go! attic zombie needs my help.\n Good luck {FRIEND}!"
+        resps["legend"] = "Awesome!! The legend will always be available for you in case you forget something." \
+                          f"\nLet's see who comes in now, aren't you excited {FRIEND}?"
+        resps["knock"] = "Someone knocked on the door!! EXCITING!!\n Let's find out who. Press [K] to open the door."
+        resps["yas"] = [f"Great Job {FRIEND}!!", f"AMAZING {FRIEND}!!!", f"Go {FRIEND}!!", "Excellent!!!"]
+        resps["try"] = "OOPS, Not this one Pal. Try something else you can do this!!"
+        resps["hybrid"] = "What could we give both costumes if they were separated?\n if there's NO such thing, use the Trick Gun!"
+        resps["base"] = f"Look at the LEGEND super-{FRIEND}! You got this."
+        resps["ghost"] = f"Look at this ghost {FRIEND}! does it affect our visitor?\n remember regular ghosts will accept anything!"
+        resps["done"] = f"Alrighty I gotta go! attic zombie needs my help.\n Good luck mega-{FRIEND}! YOU GOT THIS!"
 
     else:
         # Aloof NPC:
-        texts.append(["Hi, my name is Noopcie.\nI'm here to help you learn how Trick or Treat works around here.",
+        texts.append(["Hey there new guy, my name is Noopcie."
+                      "\nI'm here to help you learn how Trick or Treat works around here.",
                       "In this town,"
                       "\npeople's costumes signify what they want you to give them, you'll see later.",
-                      "If you need help, come over to me and press L."])
+                      "If you need help, come over to me and press [L]."])
+
         texts.append(["Your first visitor is Cookie Monster and he likes cookies.",
-                      "Go to the candy jar (near the door) and press K to take a candy.",
+                      "Go to the candy jar (near the door) and press [K] to take a candy.",
                       "Then go back to the door and press K to give the candy."])
 
-        #texts.append(["Good, now go to the door and give it to him (by pressing K)"])
+        # texts.append(["Good, now go to the door and give it to him (by pressing K)"])
         texts.append(["Your next visitor is a princess.",
                       "Princesses like candies and also fruits (which are in the bottom right)."
                       "\nGive her either."])
@@ -241,38 +248,36 @@ def npc_texter(npc_type, FRIEND):
                       "\nGive it either."])
 
         texts.append(["There are a few more visitors that may appear with different preferences.",
-                      "To make sure you know all these preferences, I hung a legend for you on the wall.",
-                      "Go to the legend (above the shelf) and press K to read it."])
+                      "So go to the LEGEND (above the left shelf, near the door) and press K to read it."])
 
         texts.append(["This one is a hybrid costume, a combination of 2 basic costumes.",
-                      "Hybrid costumes want to get something that satisfies both original costumes.",
-                      "Princesses like candies and fruits. Farmers like both fruit and money. What can you give both?"])
+                      "Check the LEGEND to see what both original costumes will like\n and give it that."])
+
         texts.append(["Try to handle this one on your own."])
 
-        #texts.append(["Lastly, let's see you handle this one. If you need help, come over and press L"])
+        # texts.append(["Lastly, let's see you handle this one. If you need help, come over and press L"])
 
-        texts.append(["This hybrid is a special one, if both parts of the hybrid don't share\n preferences,"
-                      "you can't TREAT them.",
-                      "If you can't TREAT them, TRICK them.\nGo take the water gun of the wall (top left)."
-                      "\nThen go to the visitor and press K to shoot."])
+        texts.append(["This hybrid is a special one since the hybrid's parts don't share\n preferences.",
+                      "If you can't TREAT them, Go take the water gun of the wall (top left)"
+                      "\nThen go to the visitor and TRICK them. press K to shoot."])
 
         texts.append(["The tutorial is now over. You can continue practicing for as long as you want."
-                      "\nWhen you want to continue to the real game press N.",
+                      "\nWhen you want to continue to the real game press [N].",
                       "During the real game, you'll need to work fast."
                       "\nYour score will be based on both time and accuracy.",
-                      "I'm still here until you get to the next level if you need help."
+                      "I'm still here until you press [N] to move to the next level." 
                       "\nAfter that you're on your own."])
 
         resps = dict()
         resps["nothing"] = "You can't give nothing... First pick one of the options."
-        resps["legend"] = "Okay, The legend will always be available for you in case you forget."
+        resps["legend"] = "Okay, The LEGEND will always be right there."
         resps["knock"] = "Go to the door and press K to open it."
         resps["yas"] = ["Good", "Cool", "Okay"]
-        resps["try"] = "This one's wrong. Try again."
-        resps["hybrid"] = "What can you give this hybrid? Can you give them both the same thing? \notherwise, it's a TRICK."
-        resps["base"] = "Remember you can always use the LEGEND."
-        resps["ghost"] = "Ghost hybrids are interesting. Think about the way they act."
-        resps["done"] = "Alright, attic zombie needs my help, Don't let me down!"
+        resps["try"] = "This one's wrong. Try again..."
+        resps["hybrid"] = "Look, can you give both costume parts the same thing?\nOTHERWISE, you should know what to do."
+        resps["base"] = "You might see me as a LEGEND, but I'm not..."
+        resps["ghost"] = "Listen, ghosts don't exist.\n I don't see a ghost there..."
+        resps["done"] = "Attic zombie needs my help, Don't let me down..."
 
     return texts, resps
 
@@ -362,6 +367,7 @@ class Door(Button):
             self.shifted = False
             # self.image = self.sprites[self.current_sprite]
 
+
 def mirror_img(f, game_size):
     image = Image.open(f)
     image = ImageOps.mirror(image)
@@ -429,15 +435,15 @@ class Player(Animated_Sprite):
         if down:
             #dt = clock.tick(1000)
             if event.key == pygame.K_a:
-                self.deltas[0] -= self.player_speed #* dt
+                self.deltas[0] -= self.player_speed * stretch[0]  #* dt
                 self.set_pressed(1)
             if event.key == pygame.K_d:
-                self.deltas[0] += self.player_speed #* dt
+                self.deltas[0] += self.player_speed * stretch[0]  #* dt
                 self.set_pressed(0)
             if event.key == pygame.K_w:
-                self.deltas[1] -= self.player_speed #* dt
+                self.deltas[1] -= self.player_speed * stretch[1] #* dt
             if event.key == pygame.K_s:
-                self.deltas[1] += self.player_speed #* dt
+                self.deltas[1] += self.player_speed * stretch[1] #* dt
         else:
             if event.key == pygame.K_a or event.key == pygame.K_d:
                 self.deltas[0] = 0
@@ -482,13 +488,12 @@ class NPC(Animated_Sprite):
         self.rect.center = [pos_x + loc_offset, pos_y + loc_offset]
 
     def move_towards_coords(self, coords, offset=70):
-        #dt = clock.tick(10000)
         self.dx, self.dy = coords[0] - self.rect.center[0], coords[1] - self.rect.center[1]
         if abs(self.dx) >= offset or abs(self.dy) >= offset:
             dist = math.dist(coords, self.rect.center)
             self.dx, self.dy = self.dx / dist, self.dy / dist  # Normalize
-            self.deltas[0] += self.dx * self.move_speed #* dt
-            self.deltas[1] += self.dy * self.move_speed #* dt
+            self.deltas[0] += self.dx * self.move_speed*stretch[0]
+            self.deltas[1] += self.dy * self.move_speed*stretch[1]
         else:
             self.deltas = [0, 0]
         self.rect.center = list(map(add, list(self.rect.center), self.deltas))
@@ -531,7 +536,8 @@ class NPC(Animated_Sprite):
 
             else:  # npc is already talking
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_l or \
-                        (event.type == pygame.MOUSEBUTTONDOWN and next_button.coll_check(event.pos)):  # l was pressed to advance
+                        (event.type == pygame.MOUSEBUTTONDOWN and next_button.coll_check(
+                            event.pos)):  # l was pressed to advance
                     next_button.set_hovered()
                     next_button.sound.play()
                     self.is_talking = False  # Responses are exclusively 1-panel
@@ -543,7 +549,8 @@ class NPC(Animated_Sprite):
 
         else:  # Scripted talk
             if not self.is_talking:
-                if (event.type == pygame.KEYDOWN and event.key == pygame.K_l) or force_talk:  # Npc should start with a scripted message
+                if (
+                        event.type == pygame.KEYDOWN and event.key == pygame.K_l) or force_talk:  # Npc should start with a scripted message
                     if msg_button in game_sprites and msg_button.coll_check(player.rect.center, x_offset=50,
                                                                             y_offset=80):
                         msg_button.set_hovered()
@@ -554,7 +561,8 @@ class NPC(Animated_Sprite):
 
             else:  # npc is already talking
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_l or \
-                        (event.type == pygame.MOUSEBUTTONDOWN and next_button.coll_check(event.pos)):  # l was pressed to advance
+                        (event.type == pygame.MOUSEBUTTONDOWN and next_button.coll_check(
+                            event.pos)):  # l was pressed to advance
                     next_button.set_hovered()
                     next_button.sound.play()
                     if msg_button in game_sprites:
@@ -721,7 +729,7 @@ def score(ans_lst, time_lst):
     for i, ans in enumerate(ans_lst):
         if ans:
             tim = float(time_lst[i])
-            score += (2.5 / tim)*10
+            score += (2.5 / tim) * 10
     return round(score, 2)
 
 
@@ -729,7 +737,7 @@ def adj_draw(msg_texts, core_surface, x=75, y=440):
     texts = msg_texts.splitlines()
     for i, text in enumerate(texts):
         msg_text = textfont.render(text, 1, (0, 0, 0))
-        core_surface.blit(msg_text, (x, y + i * 25))
+        core_surface.blit(msg_text, (tf(x, 0), tf(y + i * 25, 1)))
 
 
 def update_frame(player, npc, game_sprites, tool_sprites, core_surface, text_window, msg_texts, text_sprites, door,
@@ -740,37 +748,44 @@ def update_frame(player, npc, game_sprites, tool_sprites, core_surface, text_win
         npc.rect.center = border_check(game_size, npc.rect.center, 32)
     player.rect.center = border_check(game_size, player.rect.center, 32)
     if door.is_open:
-        core_surface.blit(title_window, (430, 43))
-        core_surface.blit(enemy_title, (449, 63))
+        core_surface.blit(title_window, (tf(430, 0), tf(43, 1)))
+        core_surface.blit(enemy_title, (tf(449, 0), tf(63, 1)))
     tool_sprites.draw(core_surface)
     tool_sprites.update()
     game_enemy.draw(core_surface)
     game_sprites.draw(core_surface)
     game_sprites.update()
     if npc and npc.is_talking:
-        core_surface.blit(noopcie_pic, (20, 265))
-        core_surface.blit(text_window, (0, 300))
+        core_surface.blit(noopcie_pic, (tf(20, 0), tf(265, 1)))
+        core_surface.blit(text_window, (tf(0, 0), tf(300, 1)))
         hint_text = textfont.render('<press the [L] key or the next button to advance>', 1, (72, 120, 170))
-        core_surface.blit(hint_text, (80, 540))
+        core_surface.blit(hint_text, (tf(80, 0), tf(540, 1)))
         adj_draw(msg_texts, core_surface)
         text_sprites.draw(core_surface)
         text_sprites.update()
     if remainder:
-        core_surface.blit(rem_window, (0, 530))
+        core_surface.blit(rem_window, (tf(0, 0), tf(530, 1)))
         hint_text = textfont.render('<Keep practicing, and when ready press the [N] key to test your mettle!>',
                                     1, (72, 120, 170))
-        core_surface.blit(hint_text, (80, 547))
+        core_surface.blit(hint_text, (tf(80, 0), tf(547, 1)))
+
+
+def tf(num, pos):
+    return int(num * stretch[pos])
 
 
 ################################################# INIT STUFF ###########################################################
 pygame.init()
+#game_size = (1366, 748)
 game_size = (800, 600)
+#stretch = (1.7075, 1.24666)
+stretch = (1, 1)
 core_surface, main_menu = game_setup(game_size, 'Tomidos project', 'game_assets_f/Tools/Candy/candy_i.png',
                                      'game_assets_f/Backgrounds/mm_bg.png')
 text_window = pygame.image.load('game_assets_f/text_window.PNG')
-text_window = pygame.transform.smoothscale(text_window, [825, 400])  # Changes image dims
-title_window = pygame.transform.smoothscale(text_window, [300, 70])  # Changes image dims
-rem_window = pygame.transform.smoothscale(text_window, [800, 70])  # Changes image dims
+text_window = pygame.transform.smoothscale(text_window, [tf(825, 0), tf(400, 1)])  # Changes image dims
+title_window = pygame.transform.smoothscale(text_window, [tf(300, 0), tf(70, 1)])  # Changes image dims
+rem_window = pygame.transform.smoothscale(text_window, [tf(800, 0), tf(70, 1)])  # Changes image dims
 textfont = pygame.font.SysFont('leelawadeeuisemilight', 20)
 scorefont = pygame.font.SysFont('leelawadeeuisemilight', 32)
 basefont = pygame.font.Font(None, 32)
@@ -787,7 +802,7 @@ knock_sound = pygame.mixer.Sound('game_assets_f/sounds/door_knock_sound.mp3')
 
 # MUSIC
 pygame.mixer.music.load("game_assets_f/sounds/menu_to_tutorial_music.wav")
-pygame.mixer.music.set_volume(0.25)
+pygame.mixer.music.set_volume(0.1)
 pygame.mixer.music.play(-1)
 # pygame.mixer.music.load("game_assets_f/sounds/game_theme_music.mp3")
 
@@ -811,21 +826,21 @@ single_opts = ["Princess", "Robot", "Farmer", "Cookie Monster", "Tooth", "Busine
 ghost_opts = []
 for g_comb in single_opts[:-1]:
     ghost_opts.append(g_comb + "-Ghost")
-Princess = Enemy("game_assets_f/game_enemies/Princess", 500, 190, (215, 162), "Princess", img_format='png')
-Robot = Enemy("game_assets_f/game_enemies/Robot", 500, 190, (215, 162), "Robot", img_format='png')
-Farmer = Enemy("game_assets_f/game_enemies/Farmer", 500, 190, (215, 162), "Farmer", img_format='png')
-Cookie = Enemy("game_assets_f/game_enemies/Cookie Monster", 500, 190, (215, 162), "Cookie Monster", img_format='png')
-Tooth = Enemy("game_assets_f/game_enemies/Tooth", 500, 190, (215, 162), "Tooth", img_format='png')
-Business = Enemy("game_assets_f/game_enemies/Businessman", 500, 190, (215, 162), "Businessman", img_format='png')
-Ghost = Enemy("game_assets_f/game_enemies/Ghost", 500, 190, (215, 162), "Ghost", img_format='png')
+Princess = Enemy("game_assets_f/game_enemies/Princess", tf(500, 0), tf(190, 1), (tf(215, 0), tf(162, 1)), "Princess", img_format='png')
+Robot = Enemy("game_assets_f/game_enemies/Robot", tf(500, 0), tf(190, 1), (tf(215, 0), tf(162, 1)), "Robot", img_format='png')
+Farmer = Enemy("game_assets_f/game_enemies/Farmer", tf(500, 0), tf(190, 1), (tf(215, 0), tf(162, 1)), "Farmer", img_format='png')
+Cookie = Enemy("game_assets_f/game_enemies/Cookie Monster", tf(500, 0), tf(190, 1), (tf(215, 0), tf(162, 1)), "Cookie Monster", img_format='png')
+Tooth = Enemy("game_assets_f/game_enemies/Tooth", tf(500, 0), tf(190, 1), (tf(215, 0), tf(162, 1)), "Tooth", img_format='png')
+Business = Enemy("game_assets_f/game_enemies/Businessman", tf(500, 0), tf(190, 1), (tf(215, 0), tf(162, 1)), "Businessman", img_format='png')
+Ghost = Enemy("game_assets_f/game_enemies/Ghost", tf(500, 0), tf(190, 1), (tf(215, 0), tf(162, 1)), "Ghost", img_format='png')
 reg_enemies = [Princess, Robot, Farmer, Cookie, Tooth, Business, Ghost]
 hybrid_enemies = []
 for i, i_opt in enumerate(single_opts):
     for j in range(i + 1, len(single_opts)):
         j_opt = single_opts[j]
         hybrid_enemies.append(
-            Enemy(f"game_assets_f/game_enemies/ToT - {i_opt}-{j_opt}", 500, 190, (215, 162), i_opt, j_opt,
-                  img_format='png'))
+            Enemy(f"game_assets_f/game_enemies/ToT - {i_opt}-{j_opt}", tf(500, 0), tf(190, 1), (tf(215, 0), tf(162, 1))
+                  , i_opt, j_opt, img_format='png'))
 all_enemies = reg_enemies.copy()
 all_enemies.extend(hybrid_enemies)
 
@@ -840,27 +855,30 @@ game_enemies = [all_enemies[0], all_enemies[12], all_enemies[25], all_enemies[4]
 
 # Main Menu Screen: ####################################################################################################
 menu_sprites = pygame.sprite.Group()
-play_button = Button('game_assets_f/Buttons/play_button', 1, 400, 200, (215, 162),
+play_button = Button('game_assets_f/Buttons/play_button', 1, tf(400, 0), tf(200, 1),
+                     (tf(215, 0), tf(162, 1)),
                      sound_path='game_assets_f/sounds/button_click.wav')
-quit_button = Button('game_assets_f/Buttons/quit_button', 1, 400, 400, (215, 162),
+quit_button = Button('game_assets_f/Buttons/quit_button', 1, tf(400, 0), tf(400, 1), (tf(215, 0), tf(162, 1)),
                      sound_path='game_assets_f/sounds/button_click.wav')
 menu_sprites.add([play_button, quit_button])
 
 # Pause Menu Screen: ###################################################################################################
 pause_sprites = pygame.sprite.Group()
-p_res_button = Button('game_assets_f/Buttons/continue_button', 1, 400, 400, (215, 162),
+p_res_button = Button('game_assets_f/Buttons/continue_button', 1, tf(400, 0), tf(400, 1), (tf(215, 0), tf(162, 1)),
                       sound_path='game_assets_f/sounds/button_click.wav')
-p_quit_button = Button('game_assets_f/Buttons/quit_button', 1, 400, 500, (215, 162),
+p_quit_button = Button('game_assets_f/Buttons/quit_button', 1, tf(400, 0), tf(500, 1), (tf(215, 0), tf(162, 1)),
                        sound_path='game_assets_f/sounds/button_click.wav')
 pause_sprites.add([p_res_button, p_quit_button])
 
 # Name Menu Screen: ###################################################################################################
 name_sprites = pygame.sprite.Group()
-n_res_button = Button('game_assets_f/Buttons/continue_button', 1, 385, 499, (150, 113),
+n_res_button = Button('game_assets_f/Buttons/continue_button', 1, tf(385, 0), tf(499, 1), (tf(150, 0), tf(113, 1)),
                       sound_path='game_assets_f/sounds/button_click.wav')
 name_sprites.add(n_res_button)
 user_name = ''
-text_input_rect = pygame.Rect(460, 295, 140, 32)
+text_input_rect = pygame.Rect(tf(460, 0), tf(295, 1), tf(140, 0), tf(32, 1))
+bad_sound = pygame.mixer.Sound('game_assets_f/sounds/stuck_sound.mp3')
+color_bad = pygame.Color(247, 70, 91)
 color_active = pygame.Color('lightskyblue3')
 color_passive = pygame.Color('lightskyblue2')
 color = color_passive
@@ -868,26 +886,26 @@ active = False
 
 # Game Screen: #########################################################################################################
 game_sprites = pygame.sprite.Group()
-player = Player('game_assets_f/player', 0, 370, 480, (129, 97), 2, img_format='PNG')
+player = Player('game_assets_f/player', 0, tf(370, 0), tf(480, 1), (tf(129, 0), tf(97, 1)), 2, img_format='PNG')
 npc_types = ["Favorite", "Hyper", "Aloof"]
 random_type = randrange(0, 3)
 # random_type = 2
 chosen_npc = npc_types[random_type]
 # chosen_npc = 'Aloof'
 noopcie_pic = pygame.image.load('game_assets_f/Noopcie/{}/Noopcie_{}.png'.format(chosen_npc, random_type + 1))
-noopcie_pic = pygame.transform.smoothscale(noopcie_pic, [214, 162])
+noopcie_pic = pygame.transform.smoothscale(noopcie_pic, [tf(214, 0), tf(162, 1)])
 FRIEND = "FRIEND"
-npc = NPC('game_assets_f/Noopcie/{}'.format(chosen_npc), 0, 608, 84, (82, 65), 2, loc_offset=100, img_format='PNG',
+npc = NPC('game_assets_f/Noopcie/{}'.format(chosen_npc), 0, tf(608, 0), tf(84, 1), (tf(82, 0), tf(65, 1)), 2, loc_offset=100, img_format='PNG',
           type=chosen_npc, friend_name=FRIEND)
-sandbox_approaches = float(-1 * len(npc.texts[-1]) - 2)/2 + 0.5
-msg_button = Msg_Button('game_assets_f/Buttons/msg_button', 1, 400, 200, (100, 75), npc=npc, y_offset=-60,
+sandbox_approaches = float(-1 * len(npc.texts[-1]) - 2) / 2 + 0.5
+msg_button = Msg_Button('game_assets_f/Buttons/msg_button', 1, tf(400, 0), tf(200, 1), (tf(100, 0), tf(75, 1)), npc=npc, y_offset=-60,
                         sound_path='game_assets_f/sounds/button_click.wav')
 text_sprites = pygame.sprite.Group()
-next_button = Button('game_assets_f/Buttons/next_button', 1, 720, 540, (107, 81),
+next_button = Button('game_assets_f/Buttons/next_button', 1, tf(720, 0), tf(540, 1), (tf(107, 0), tf(81, 1)),
                      sound_path='game_assets_f/sounds/button_click.wav')
-game_button = Button('game_assets_f/Buttons/next_button', 1, 720, 540, (107, 81),
+game_button = Button('game_assets_f/Buttons/next_button', 1, tf(720, 0), tf(540, 1), (tf(107, 0), tf(81, 1)),
                      sound_path='game_assets_f/sounds/button_click.wav')
-door_button = Door('game_assets_f/Buttons/door_button', 1, 500, 190, (300, 185),
+door_button = Door('game_assets_f/Buttons/door_button', 1, tf(500, 0), tf(190, 1), (tf(300, 0), tf(185, 1)),
                    sound_path='game_assets_f/sounds/door_open.wav')
 
 game_sprites.add([door_button, msg_button, npc, player])
@@ -895,16 +913,16 @@ text_sprites.add([next_button])
 
 tool_sprites = pygame.sprite.Group()
 
-candy_button = Button('game_assets_f/Tools/Candy', 1, 220, 175, (112, 81),
+candy_button = Button('game_assets_f/Tools/Candy', 1, tf(220, 0), tf(175, 1), (tf(112, 0), tf(81, 1)),
                       sound_path='game_assets_f/sounds/candy_sound.wav', tag='Candy')
-fruit_button = Button('game_assets_f/Tools/Fruit', 1, 610, 475, (112, 81),
+fruit_button = Button('game_assets_f/Tools/Fruit', 1, tf(610, 0), tf(475, 1), (tf(112, 0), tf(81, 1)),
                       sound_path='game_assets_f/sounds/fruit_sound.wav', tag='Fruit')
-money_button = Button('game_assets_f/Tools/Money', 1, 100, 395, (90, 64),
+money_button = Button('game_assets_f/Tools/Money', 1, tf(100, 0), tf(395, 1), (tf(90, 0), tf(64, 1)),
                       sound_path='game_assets_f/sounds/money_sound.wav', tag='Money')
-trick_button = Button('game_assets_f/Tools/Trick', 1, 120, 95, (112, 81),
+trick_button = Button('game_assets_f/Tools/Trick', 1, tf(120, 0), tf(95, 1), (tf(112, 0), tf(82, 1)),
                       sound_path='game_assets_f/sounds/Lesh_laugh.wav', tag='Trick')
 
-legend_button = Button('game_assets_f/Tools/Legend', 1, 394, 44, (112, 81),
+legend_button = Button('game_assets_f/Tools/Legend', 1, tf(394, 0), tf(44, 1), (tf(112, 0), tf(82, 1)),
                        sound_path='game_assets_f/sounds/button_click.wav')
 available_tools = [candy_button]
 tool_sprites.add([candy_button, fruit_button, money_button, trick_button, legend_button])
@@ -916,19 +934,20 @@ outcome = Outcome(X_sound_path='game_assets_f/sounds/wrong_sound.wav',
 # Finish Screen: #######################################################################################################
 finish_screen = fit_bg_dims(game_size, 'game_assets_f/Backgrounds/finish_bg.png')
 finish_buttons = pygame.sprite.Group()
-finish_button = Button('game_assets_f/Buttons/quit_button', 1, 400, 400, (215, 162),
+finish_button = Button('game_assets_f/Buttons/quit_button', 1, tf(400, 0), tf(400, 1), (tf(215, 0), tf(162, 1)),
                        sound_path='game_assets_f/sounds/button_click.wav')
 finish_buttons.add(finish_button)
 
 # Legend Screen: #######################################################################################################
 legend_screen = fit_bg_dims(game_size, 'game_assets_f/Backgrounds/legend_bg.png')
 legend_buttons = pygame.sprite.Group()
-cont_button = Button('game_assets_f/Buttons/continue_button', 1, 400, 500, (215, 162),
+cont_button = Button('game_assets_f/Buttons/continue_button', 1, tf(400, 0), tf(500, 1), (tf(215, 0), tf(162, 1)),
                      sound_path='game_assets_f/sounds/button_click.wav')
 legend_buttons.add(cont_button)
 start_time = time.time()
 
 # Phase-specific variables: ############################################################################################
+bad_time = -8
 knocked = False
 last_talk_action = 0
 done_talking_flag = 0
@@ -937,7 +956,7 @@ new_outcome = outcome
 legend_const_action = 0
 legend_last_talk_action = 0
 visited_legend = False
-################################################# GAME LOOP #########################################################
+################################################# GAME LOOP ############################################################
 while running:
     core_surface.blit(curr_screen, (0, 0))
     # Main Menu Stuff
@@ -971,6 +990,8 @@ while running:
         menu_sprites.update()
 
     elif curr_screen == name_screen:
+        if time.time() - bad_time > 0.5:
+            bad_flag = False
         for event in pygame.event.get():
             if event.type == pygame.MOUSEMOTION:
                 if n_res_button.coll_check(event.pos):
@@ -985,10 +1006,15 @@ while running:
                     active = False
 
                 if n_res_button.coll_check(event.pos):
-                    n_res_button.sound.play()
-                    if len(user_name) >= 2:
+                    if len(user_name) >= 1:
+                        n_res_button.sound.play()
                         npc.update_texts(player_name=user_name)
-                    curr_screen = instruct_screen
+                        curr_screen = instruct_screen
+                    else:
+                        bad_flag = True
+                        bad_time = time.time()
+                        bad_sound.play()
+                        break
 
             if event.type == pygame.QUIT:
                 running = False
@@ -999,8 +1025,9 @@ while running:
                     user_name = user_name[:-1]
                 else:
                     user_name += event.unicode
-
-        if active:
+        if bad_flag:
+            color = color_bad
+        elif active:
             color = color_active
         else:
             color = color_passive
@@ -1053,7 +1080,7 @@ while running:
                     curr_screen = level_0
                     pygame.mixer.music.unload()
                     pygame.mixer.music.load("game_assets_f/sounds/game_theme_music.mp3")
-                    pygame.mixer.music.set_volume(0.25)
+                    pygame.mixer.music.set_volume(0.1)
                     pygame.mixer.music.play()
 
     # Game Screen Stuff
@@ -1146,7 +1173,7 @@ while running:
 
                 for button in tool_sprites:
                     if button in available_tools:
-                        if door_button.is_open and button.coll_check(player.rect.center,x_offset=25,y_offset=25):
+                        if door_button.is_open and button.coll_check(player.rect.center, x_offset=25, y_offset=25):
                             button.set_hovered()
                         else:
                             button.set_released()
@@ -1163,10 +1190,11 @@ while running:
                     if event.key == pygame.K_k:
                         for button in tool_sprites:
                             if button in available_tools:
-                                if door_button.is_open and\
+                                if door_button.is_open and \
                                         button.coll_check(player.rect.center, x_offset=25, y_offset=25):
                                     button.sound.play()
-                                    choice = button.tag
+                                    if button.tag:
+                                        choice = button.tag
                                     if choice is not None:
                                         player.change_sprite('game_assets_f/player_aux/player_{}.png'.format(choice))
                         if legend_button in available_tools and legend_button.coll_check(player.rect.center):
@@ -1299,7 +1327,7 @@ while running:
                         all_game_time = time.time()
                         pygame.mixer.music.unload()
                         pygame.mixer.music.load("game_assets_f/sounds/after_tut_music.mp3")
-                        pygame.mixer.music.set_volume(0.25)
+                        pygame.mixer.music.set_volume(0.1)
                         pygame.mixer.music.play()
                         break
                 if npc.is_talking:
@@ -1404,7 +1432,8 @@ while running:
                     if event.key == pygame.K_k:
                         for button in tool_sprites:
                             if button in available_tools:
-                                if door_button.is_open and button.coll_check(player.rect.center, x_offset=25,y_offset=25):
+                                if door_button.is_open and button.coll_check(player.rect.center, x_offset=25,
+                                                                             y_offset=25):
                                     button.sound.play()
                                     choice = button.tag
                                     if choice:
@@ -1481,7 +1510,7 @@ while running:
                     all_game_time = time.time()
                     pygame.mixer.music.unload()
                     pygame.mixer.music.load("game_assets_f/sounds/after_tut_music.mp3")
-                    pygame.mixer.music.set_volume(0.25)
+                    pygame.mixer.music.set_volume(0.1)
                     pygame.mixer.music.play()
                     answered_correctly = []
                     reaction_times = []
@@ -1498,5 +1527,5 @@ while running:
                     sys.exit()
 
     clock.tick()
-    #print(clock.get_fps())
+    # print(clock.get_fps())
     pygame.display.update()  # TODO bad for perfomance, should keep a list of objects(rects/sprites) that are updated and only update them

@@ -1,0 +1,2 @@
+changlog for beta ver3:
+-- Added blocked-from-not-filling-name option in the name screen
