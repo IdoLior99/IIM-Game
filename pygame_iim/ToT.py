@@ -427,16 +427,17 @@ class Player(Animated_Sprite):
 
     def update_delts(self, event, down=True):
         if down:
+            #dt = clock.tick(1000)
             if event.key == pygame.K_a:
-                self.deltas[0] -= self.player_speed
+                self.deltas[0] -= self.player_speed #* dt
                 self.set_pressed(1)
             if event.key == pygame.K_d:
-                self.deltas[0] += self.player_speed
+                self.deltas[0] += self.player_speed #* dt
                 self.set_pressed(0)
             if event.key == pygame.K_w:
-                self.deltas[1] -= self.player_speed
+                self.deltas[1] -= self.player_speed #* dt
             if event.key == pygame.K_s:
-                self.deltas[1] += self.player_speed
+                self.deltas[1] += self.player_speed #* dt
         else:
             if event.key == pygame.K_a or event.key == pygame.K_d:
                 self.deltas[0] = 0
@@ -481,12 +482,13 @@ class NPC(Animated_Sprite):
         self.rect.center = [pos_x + loc_offset, pos_y + loc_offset]
 
     def move_towards_coords(self, coords, offset=70):
+        #dt = clock.tick(10000)
         self.dx, self.dy = coords[0] - self.rect.center[0], coords[1] - self.rect.center[1]
         if abs(self.dx) >= offset or abs(self.dy) >= offset:
             dist = math.dist(coords, self.rect.center)
             self.dx, self.dy = self.dx / dist, self.dy / dist  # Normalize
-            self.deltas[0] += self.dx * self.move_speed
-            self.deltas[1] += self.dy * self.move_speed
+            self.deltas[0] += self.dx * self.move_speed #* dt
+            self.deltas[1] += self.dy * self.move_speed #* dt
         else:
             self.deltas = [0, 0]
         self.rect.center = list(map(add, list(self.rect.center), self.deltas))
@@ -500,20 +502,19 @@ class NPC(Animated_Sprite):
         return self.resps["yas"][good]
 
     def npc_talk(self, msg_button, game_sprites, player, tut_phase, resp_conds, resp_texts, event, next_button,
-                 textfont, curr_enemy=None):
+                 textfont, force_talk=False):
         """
         Determines what the npc should say next (if anything at all)
         :param tut_phase: How far into the tutorial are we
         :param resp_conds: Various conditions for condition-based repsonses
         :param resp_texts: Various responses incasae said condition is met
         :param event: in event.get.
+        :param force_talk - in case we want the npc to talk regardless of interaction.
         :return: msg_texts - text to be said by the npc.
         """
         if self.text_i != tut_phase:
             self.text_i = tut_phase
         texts = self.texts[self.text_i]
-        if curr_enemy:  # We want to load enemy - specific texts? we're in the sandbox phase
-            pass
         msg_texts = ""
         # Needed if a response is script-dependant.
         action = 0  # 0 == didn't talk, 1 == scripted talking, 2 == responding, 3 == scripted message done, 4 == response message done
@@ -542,7 +543,7 @@ class NPC(Animated_Sprite):
 
         else:  # Scripted talk
             if not self.is_talking:
-                if event.type == pygame.KEYDOWN and event.key == pygame.K_l:  # Npc should start with a scripted message
+                if (event.type == pygame.KEYDOWN and event.key == pygame.K_l) or force_talk:  # Npc should start with a scripted message
                     if msg_button in game_sprites and msg_button.coll_check(player.rect.center, x_offset=50,
                                                                             y_offset=80):
                         msg_button.set_hovered()
@@ -550,6 +551,7 @@ class NPC(Animated_Sprite):
                         self.is_talking = True
                         msg_texts = texts[self.subtext_i]
                         action = 1
+
             else:  # npc is already talking
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_l or \
                         (event.type == pygame.MOUSEBUTTONDOWN and next_button.coll_check(event.pos)):  # l was pressed to advance
@@ -731,7 +733,7 @@ def adj_draw(msg_texts, core_surface, x=75, y=440):
 
 
 def update_frame(player, npc, game_sprites, tool_sprites, core_surface, text_window, msg_texts, text_sprites, door,
-                 stats=None):
+                 remainder=False):
     player.move_player()
     if npc:
         npc.move_towards_coords(player.rect.center)
@@ -748,14 +750,16 @@ def update_frame(player, npc, game_sprites, tool_sprites, core_surface, text_win
     if npc and npc.is_talking:
         core_surface.blit(noopcie_pic, (20, 265))
         core_surface.blit(text_window, (0, 300))
+        hint_text = textfont.render('<press the [L] key or the next button to advance>', 1, (72, 120, 170))
+        core_surface.blit(hint_text, (80, 540))
         adj_draw(msg_texts, core_surface)
         text_sprites.draw(core_surface)
         text_sprites.update()
-    if stats:
-        core_surface.blit(stats_window, (400, 200))
-        adj_draw(msg_texts, core_surface, x=400, y=200)
-        text_sprites.draw(core_surface)
-        text_sprites.update()
+    if remainder:
+        core_surface.blit(rem_window, (0, 530))
+        hint_text = textfont.render('<Keep practicing, and when ready press the [N] key to test your mettle!>',
+                                    1, (72, 120, 170))
+        core_surface.blit(hint_text, (80, 547))
 
 
 ################################################# INIT STUFF ###########################################################
@@ -766,7 +770,7 @@ core_surface, main_menu = game_setup(game_size, 'Tomidos project', 'game_assets_
 text_window = pygame.image.load('game_assets_f/text_window.PNG')
 text_window = pygame.transform.smoothscale(text_window, [825, 400])  # Changes image dims
 title_window = pygame.transform.smoothscale(text_window, [300, 70])  # Changes image dims
-stats_window = pygame.transform.smoothscale(text_window, [600, 400])  # Changes image dims
+rem_window = pygame.transform.smoothscale(text_window, [800, 70])  # Changes image dims
 textfont = pygame.font.SysFont('leelawadeeuisemilight', 20)
 scorefont = pygame.font.SysFont('leelawadeeuisemilight', 32)
 basefont = pygame.font.Font(None, 32)
@@ -852,11 +856,11 @@ pause_sprites.add([p_res_button, p_quit_button])
 
 # Name Menu Screen: ###################################################################################################
 name_sprites = pygame.sprite.Group()
-n_res_button = Button('game_assets_f/Buttons/continue_button', 1, 400, 490, (215, 162),
+n_res_button = Button('game_assets_f/Buttons/continue_button', 1, 385, 499, (150, 113),
                       sound_path='game_assets_f/sounds/button_click.wav')
 name_sprites.add(n_res_button)
 user_name = ''
-text_input_rect = pygame.Rect(450, 285, 140, 32)
+text_input_rect = pygame.Rect(460, 295, 140, 32)
 color_active = pygame.Color('lightskyblue3')
 color_passive = pygame.Color('lightskyblue2')
 color = color_passive
@@ -906,7 +910,6 @@ available_tools = [candy_button]
 tool_sprites.add([candy_button, fruit_button, money_button, trick_button, legend_button])
 
 # Game Answer outcome
-# TODO: find sound for wrong answer and put it in X_sound_path
 outcome = Outcome(X_sound_path='game_assets_f/sounds/wrong_sound.wav',
                   V_sound_path='game_assets_f/sounds/cheering_ppl.wav')
 
@@ -1043,19 +1046,15 @@ while running:
                 sys.exit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_k:
-                    cont_button.set_hovered()
                     cont_button.sound.play()
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_k:
-                    cont_button.set_released()
                     start_time = time.time()
                     curr_screen = level_0
                     pygame.mixer.music.unload()
                     pygame.mixer.music.load("game_assets_f/sounds/game_theme_music.mp3")
                     pygame.mixer.music.set_volume(0.25)
                     pygame.mixer.music.play()
-        legend_buttons.draw(core_surface)
-        legend_buttons.update()
 
     # Game Screen Stuff
     elif curr_screen == level_0:
@@ -1164,7 +1163,8 @@ while running:
                     if event.key == pygame.K_k:
                         for button in tool_sprites:
                             if button in available_tools:
-                                if door_button.is_open and button.coll_check(player.rect.center,x_offset=25,y_offset=25):
+                                if door_button.is_open and\
+                                        button.coll_check(player.rect.center, x_offset=25, y_offset=25):
                                     button.sound.play()
                                     choice = button.tag
                                     if choice is not None:
@@ -1265,8 +1265,8 @@ while running:
                 knocked = True
 
             for event in pygame.event.get():
-                nothing_cond = door_button.is_open and event.type == pygame.KEYDOWN and event.key == pygame.K_k \
-                               and door_button.coll_check(player.rect.center)
+                # nothing_cond = door_button.is_open and event.type == pygame.KEYDOWN and event.key == pygame.K_k \
+                #                and door_button.coll_check(player.rect.center)
                 ghost_cond = curr_enemy.title in ghost_opts and event.type == pygame.KEYDOWN and event.key == pygame.K_l \
                              and done_talking_flag == 3
                 base_cond = curr_enemy.title in single_opts and event.type == pygame.KEYDOWN and event.key == pygame.K_l \
@@ -1278,10 +1278,11 @@ while running:
                                                             hybrid_cond],
                                                            [npc.resps['done'], npc.resps["ghost"], npc.resps["base"],
                                                             npc.resps["hybrid"]],
-                                                           event, next_button, textfont)
+                                                           event, next_button, textfont,
+                                                           force_talk=done_talking_flag != 3)
                 if last_talk_action == 3:
                     done_talking_flag = last_talk_action
-                if last_talk_action == 4:  # Finished respondings
+                if last_talk_action == 4:  # Finished responding
                     new_outcome.reset()
                     last_talk_action = 0
                     npc.curr_response = None
@@ -1310,7 +1311,8 @@ while running:
 
                 for button in tool_sprites:
                     if button in available_tools:
-                        if door_button.is_open and button.coll_check(player.rect.center,x_offset=25,y_offset=25):
+                        if door_button.is_open and \
+                                button.coll_check(player.rect.center, x_offset=25, y_offset=25):
                             button.set_hovered()
                         else:
                             button.set_released()
@@ -1318,6 +1320,8 @@ while running:
                     door_button.set_hovered()
                 else:
                     door_button.set_released()
+                if npc.is_talking and event.type == pygame.MOUSEBUTTONDOWN and next_button.coll_check(event.pos):
+                    sandbox_approaches += 0.5
                 if event.type == pygame.KEYDOWN:
                     if not npc.is_talking:
                         player.update_delts(event)
@@ -1330,7 +1334,8 @@ while running:
                     if event.key == pygame.K_k:
                         for button in tool_sprites:
                             if button in available_tools:
-                                if door_button.is_open and button.coll_check(player.rect.center,x_offset=25,y_offset=25):
+                                if door_button.is_open and \
+                                        button.coll_check(player.rect.center, x_offset=25, y_offset=25):
                                     button.sound.play()
                                     choice = button.tag
                                     if choice:
@@ -1338,7 +1343,7 @@ while running:
                         if legend_button in available_tools and legend_button.coll_check(player.rect.center):
                             legend_button.sound.play()  # for hybrid, after legend is intro'd
                             curr_screen = legend_screen
-                        if door_button.coll_check(player.rect.center):
+                        if not npc.is_talking and door_button.coll_check(player.rect.center):
                             if choice:
                                 final_choice = choice
                                 choice = None
@@ -1370,7 +1375,7 @@ while running:
                     if event.key == pygame.K_n:
                         next_button.set_released()
             update_frame(player, npc, game_sprites, tool_sprites, core_surface, text_window, msg_texts,
-                         text_sprites, door_button)
+                         text_sprites, door_button, done_talking_flag == 3 and not npc.is_talking)
 
 
         else:  # Not tutorial
@@ -1384,7 +1389,7 @@ while running:
                     sys.exit()
                 for button in tool_sprites:
                     if button in available_tools:
-                        if door_button.is_open and button.coll_check(player.rect.center,x_offset=25,y_offset=25):
+                        if door_button.is_open and button.coll_check(player.rect.center, x_offset=25, y_offset=25):
                             button.set_hovered()
                         else:
                             button.set_released()
@@ -1493,5 +1498,5 @@ while running:
                     sys.exit()
 
     clock.tick()
-    # print(clock.get_fps())
+    #print(clock.get_fps())
     pygame.display.update()  # TODO bad for perfomance, should keep a list of objects(rects/sprites) that are updated and only update them
