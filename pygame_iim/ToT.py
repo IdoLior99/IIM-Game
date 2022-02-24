@@ -729,8 +729,10 @@ def score(ans_lst, time_lst):
     for i, ans in enumerate(ans_lst):
         if ans:
             tim = float(time_lst[i])
-            score += (2.5 / tim) * 10
-    return round(score, 2)
+            score += (5.57 / tim) * 10
+    acc = accuracy(ans_lst)
+    avg_time = accuracy(time_lst)
+    return round(score*acc, 2) if acc <= 0.5 and avg_time <= 2.5 else round(score, 2)
 
 
 def adj_draw(msg_texts, core_surface, x=75, y=440):
@@ -952,7 +954,7 @@ knocked = False
 last_talk_action = 0
 done_talking_flag = 0
 new_outcome = outcome
-
+prev_screen = None
 legend_const_action = 0
 legend_last_talk_action = 0
 visited_legend = False
@@ -1038,6 +1040,7 @@ while running:
         core_surface.blit(text_surface, (text_input_rect.x + 5, text_input_rect.y + 5))
 
     elif curr_screen == pause_screen:
+
         pygame.mixer.music.pause()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -1066,6 +1069,8 @@ while running:
         pause_sprites.update()
 
     elif curr_screen == instruct_screen:
+        if prev_screen:
+            pygame.mixer.music.pause()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -1078,10 +1083,13 @@ while running:
                 if event.key == pygame.K_k:
                     start_time = time.time()
                     curr_screen = level_0
-                    pygame.mixer.music.unload()
-                    pygame.mixer.music.load("game_assets_f/sounds/game_theme_music.mp3")
-                    pygame.mixer.music.set_volume(0.1)
-                    pygame.mixer.music.play()
+                    if prev_screen:
+                        pygame.mixer.music.unpause()
+                    else:
+                        pygame.mixer.music.unload()
+                        pygame.mixer.music.load("game_assets_f/sounds/game_theme_music.mp3")
+                        pygame.mixer.music.set_volume(0.1)
+                        pygame.mixer.music.play()
 
     # Game Screen Stuff
     elif curr_screen == level_0:
@@ -1107,7 +1115,8 @@ while running:
                     done_talking_flag = last_talk_action
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
-                        curr_screen = pause_screen
+                        prev_screen = True
+                        curr_screen = instruct_screen
                     if not npc.is_talking:
                         player.update_delts(event)
                     if event.key == pygame.K_k:
@@ -1185,7 +1194,8 @@ while running:
                     if not npc.is_talking:
                         player.update_delts(event)
                     if event.key == pygame.K_ESCAPE:
-                        curr_screen = pause_screen
+                        prev_screen = True
+                        curr_screen = instruct_screen
 
                     if event.key == pygame.K_k:
                         for button in tool_sprites:
@@ -1271,7 +1281,8 @@ while running:
                     if not npc.is_talking:
                         player.update_delts(event)
                     if event.key == pygame.K_ESCAPE:
-                        curr_screen = pause_screen
+                        prev_screen = True
+                        curr_screen = instruct_screen
                     if event.key == pygame.K_k:
                         if legend_button.coll_check(player.rect.center):
                             legend_button.sound.play()
@@ -1354,7 +1365,8 @@ while running:
                     if not npc.is_talking:
                         player.update_delts(event)
                     if event.key == pygame.K_ESCAPE:
-                        curr_screen = pause_screen
+                        prev_screen = True
+                        curr_screen = instruct_screen
                     if event.key == pygame.K_n:
                         npc_flag = True
                         sandbox_time = time.time() - sandbox_time
@@ -1428,7 +1440,8 @@ while running:
                 if event.type == pygame.KEYDOWN:
                     player.update_delts(event)
                     if event.key == pygame.K_ESCAPE:
-                        curr_screen = pause_screen
+                        prev_screen = True
+                        curr_screen = instruct_screen
                     if event.key == pygame.K_k:
                         for button in tool_sprites:
                             if button in available_tools:
