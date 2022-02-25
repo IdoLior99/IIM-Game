@@ -1125,8 +1125,8 @@ while running:
                         curr_screen = instruct_screen
                     if not npc.is_talking:
                         player.update_delts(event, dt=dt)
-                    if event.key == pygame.K_k:
-                        if not npc.is_talking and door_button.coll_check(player.rect.center) and not \
+                    if event.key == pygame.K_k and not npc.is_talking:
+                        if door_button.coll_check(player.rect.center) and not \
                                 door_button.is_open and knocked:
                             knocked = False
                             door_button.is_open = True
@@ -1143,7 +1143,7 @@ while running:
 
                 if event.type == pygame.KEYUP:
                     if not npc.is_talking:
-                        player.update_delts(event, down=False,dt=dt)
+                        player.update_delts(event, down=False, dt=dt)
                     if event.key == pygame.K_l:
                         next_button.set_released()
             if time.time() - start_time > 2:
@@ -1203,7 +1203,7 @@ while running:
                         prev_screen = True
                         curr_screen = instruct_screen
 
-                    if event.key == pygame.K_k:
+                    if event.key == pygame.K_k and not npc.is_talking:
                         for button in tool_sprites:
                             if button in available_tools:
                                 if door_button.is_open and \
@@ -1289,7 +1289,7 @@ while running:
                     if event.key == pygame.K_ESCAPE:
                         prev_screen = True
                         curr_screen = instruct_screen
-                    if event.key == pygame.K_k:
+                    if event.key == pygame.K_k and not npc.is_talking:
                         if legend_button.coll_check(player.rect.center):
                             legend_button.sound.play()
                             curr_screen = legend_screen
@@ -1377,7 +1377,7 @@ while running:
                         npc_flag = True
                         sandbox_time = time.time() - sandbox_time
                         # break
-                    if event.key == pygame.K_k:
+                    if event.key == pygame.K_k and not npc.is_talking:
                         for button in tool_sprites:
                             if button in available_tools:
                                 if door_button.is_open and \
