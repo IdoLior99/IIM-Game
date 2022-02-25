@@ -188,7 +188,7 @@ def npc_texter(npc_type, FRIEND):
                       f"\nHybrid costumes are combinations of 2 basic costumes.",
                       "People with hybrid costumes want something that both original costumes would like.",
                       f"Interesting, right super-{FRIEND}?",
-                      "\nFor Example, Princesses like candies and fruits, and Farmers like both fruit and money!"
+                      "For Example, Princesses like candies and fruits, and Farmers like both fruit and money!"
                       "\nWhat can we give them that they will both like?"])
 
         texts.append([f"Here's another hybrid!",
@@ -312,7 +312,7 @@ class Animated_Sprite(pygame.sprite.Sprite):
 
 class Button(Animated_Sprite):
     def __init__(self, animation_path, animation_speed, pos_x, pos_y, game_size, sound_path=None, img_format='png',
-                 tag=None):
+                 tag=None, volume=1.0):
         super().__init__(animation_path, animation_speed, pos_x, pos_y, game_size, img_format)
         self.button_size = game_size
         self.key_pressed = False
@@ -320,6 +320,7 @@ class Button(Animated_Sprite):
         self.tag = tag
         if sound_path:
             self.sound = pygame.mixer.Sound(sound_path)
+            self.sound.set_volume(volume)
 
     def set_hovered(self):
         self.key_pressed = True
@@ -356,16 +357,19 @@ class Door(Button):
     def update(self):
         super().update()
         if self.is_open:
+            #print("here")
             self.current_sprite = len(self.sprites) - 1
             if not self.shifted:
                 self.rect.center = [self.rect.center[0] + 75, self.rect.center[1]]
             self.shifted = True
             self.image = self.sprites[int(self.current_sprite)]
         else:
+            self.current_sprite = max(self.current_sprite-1, 0)
             if self.shifted:
                 self.rect.center = [self.rect.center[0] - 75, self.rect.center[1]]
+                self.image = self.sprites[self.current_sprite]
             self.shifted = False
-            # self.image = self.sprites[self.current_sprite]
+
 
 
 def mirror_img(f, game_size):
@@ -526,7 +530,7 @@ class NPC(Animated_Sprite):
         # Can only respond once, looks for the first response condition
         resp_i = np.where(resp_conds)[0]
         resp_cond = resp_conds[resp_i[0]] if resp_i.size else False
-        if resp_cond or self.curr_response:  # Response
+        if resp_cond or self.curr_response: # Response
             if not self.is_talking:
                 if resp_cond:  # Npc should respond to something rn.
                     self.is_talking = True
@@ -918,11 +922,11 @@ tool_sprites = pygame.sprite.Group()
 candy_button = Button('game_assets_f/Tools/Candy', 1, tf(220, 0), tf(175, 1), (tf(112, 0), tf(81, 1)),
                       sound_path='game_assets_f/sounds/candy_sound.wav', tag='Candy')
 fruit_button = Button('game_assets_f/Tools/Fruit', 1, tf(610, 0), tf(475, 1), (tf(112, 0), tf(81, 1)),
-                      sound_path='game_assets_f/sounds/fruit_sound.wav', tag='Fruit')
+                      sound_path='game_assets_f/sounds/fruit_sound.wav', tag='Fruit',volume=0.7)
 money_button = Button('game_assets_f/Tools/Money', 1, tf(100, 0), tf(395, 1), (tf(90, 0), tf(64, 1)),
-                      sound_path='game_assets_f/sounds/money_sound.wav', tag='Money')
+                      sound_path='game_assets_f/sounds/money_sound.wav', tag='Money',volume=0.6)
 trick_button = Button('game_assets_f/Tools/Trick', 1, tf(120, 0), tf(95, 1), (tf(112, 0), tf(82, 1)),
-                      sound_path='game_assets_f/sounds/Lesh_laugh.wav', tag='Trick')
+                      sound_path='game_assets_f/sounds/Lesh_laugh.wav', tag='Trick', volume=0.3)
 
 legend_button = Button('game_assets_f/Tools/Legend', 1, tf(394, 0), tf(44, 1), (tf(112, 0), tf(82, 1)),
                        sound_path='game_assets_f/sounds/button_click.wav')
@@ -1120,7 +1124,7 @@ while running:
                         prev_screen = True
                         curr_screen = instruct_screen
                     if not npc.is_talking:
-                        player.update_delts(event,dt=dt)
+                        player.update_delts(event, dt=dt)
                     if event.key == pygame.K_k:
                         if not npc.is_talking and door_button.coll_check(player.rect.center) and not \
                                 door_button.is_open and knocked:
@@ -1221,7 +1225,7 @@ while running:
                                 new_outcome.sound.play()
                                 if new_outcome.right:
                                     game_enemy.remove([curr_enemy])
-                                    door_button.is_open = not door_button.is_open
+                                    door_button.is_open = False
                                     ts = time.time()
                                     tut_phase += 1
                                     knocked = False
@@ -1235,8 +1239,8 @@ while running:
                                         game_sprites.add(msg_button)
                                         available_tools.append(legend_button)
                                         break
-
-                            elif not door_button.is_open and time.time() - ts > 1:
+                                    #break
+                            elif not npc.is_talking and not door_button.is_open and time.time() - ts > 1:
                                 door_button.is_open = not door_button.is_open
                                 door_button.sound.play()
                                 if msg_button not in game_sprites:
@@ -1369,7 +1373,7 @@ while running:
                     if event.key == pygame.K_ESCAPE:
                         prev_screen = True
                         curr_screen = instruct_screen
-                    if event.key == pygame.K_n:
+                    if event.key == pygame.K_n and not npc.is_talking:
                         npc_flag = True
                         sandbox_time = time.time() - sandbox_time
                         # break
@@ -1400,7 +1404,7 @@ while running:
                                     tut_accumulative.append(round(time.time() - tut_ts, 2))  # For the learning curve
                                     ts = time.time()
 
-                            elif not door_button.is_open and time.time() - ts > 1:
+                            elif not npc.is_talking and not door_button.is_open and time.time() - ts > 1:
                                 door_button.is_open = not door_button.is_open
                                 door_button.sound.play()
                                 curr_enemy_num = randrange(0, 28)
