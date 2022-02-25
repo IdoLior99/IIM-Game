@@ -431,19 +431,19 @@ class Player(Animated_Sprite):
         else:
             self.image = self.sprites[int(self.current_sprite)]
 
-    def update_delts(self, event, down=True):
+    def update_delts(self, event, down=True, dt=1):
         if down:
             #dt = clock.tick(1000)
             if event.key == pygame.K_a:
-                self.deltas[0] -= self.player_speed * stretch[0]  #* dt
+                self.deltas[0] -= self.player_speed * stretch[0] * dt
                 self.set_pressed(1)
             if event.key == pygame.K_d:
-                self.deltas[0] += self.player_speed * stretch[0]  #* dt
+                self.deltas[0] += self.player_speed * stretch[0] * dt
                 self.set_pressed(0)
             if event.key == pygame.K_w:
-                self.deltas[1] -= self.player_speed * stretch[1] #* dt
+                self.deltas[1] -= self.player_speed * stretch[1] * dt
             if event.key == pygame.K_s:
-                self.deltas[1] += self.player_speed * stretch[1] #* dt
+                self.deltas[1] += self.player_speed * stretch[1] * dt
         else:
             if event.key == pygame.K_a or event.key == pygame.K_d:
                 self.deltas[0] = 0
@@ -487,13 +487,13 @@ class NPC(Animated_Sprite):
         self.dx, self.dy = 0, 0
         self.rect.center = [pos_x + loc_offset, pos_y + loc_offset]
 
-    def move_towards_coords(self, coords, offset=70):
+    def move_towards_coords(self, coords, offset=70, dt=1):
         self.dx, self.dy = coords[0] - self.rect.center[0], coords[1] - self.rect.center[1]
-        if abs(self.dx) >= offset or abs(self.dy) >= offset:
+        if abs(self.dx) >= offset*stretch[0] or abs(self.dy) >= offset*stretch[1]:
             dist = math.dist(coords, self.rect.center)
             self.dx, self.dy = self.dx / dist, self.dy / dist  # Normalize
-            self.deltas[0] += self.dx * self.move_speed*stretch[0]
-            self.deltas[1] += self.dy * self.move_speed*stretch[1]
+            self.deltas[0] += self.dx * self.move_speed*stretch[0]*dt
+            self.deltas[1] += self.dy * self.move_speed*stretch[1]*dt
         else:
             self.deltas = [0, 0]
         self.rect.center = list(map(add, list(self.rect.center), self.deltas))
@@ -746,7 +746,7 @@ def update_frame(player, npc, game_sprites, tool_sprites, core_surface, text_win
                  remainder=False):
     player.move_player()
     if npc:
-        npc.move_towards_coords(player.rect.center)
+        npc.move_towards_coords(player.rect.center,dt=dt)
         npc.rect.center = border_check(game_size, npc.rect.center, 32)
     player.rect.center = border_check(game_size, player.rect.center, 32)
     if door.is_open:
@@ -960,6 +960,8 @@ legend_last_talk_action = 0
 visited_legend = False
 ################################################# GAME LOOP ############################################################
 while running:
+    #dt = clock.tick(60)
+    dt = 1
     core_surface.blit(curr_screen, (0, 0))
     # Main Menu Stuff
     if curr_screen == main_menu:
@@ -1118,7 +1120,7 @@ while running:
                         prev_screen = True
                         curr_screen = instruct_screen
                     if not npc.is_talking:
-                        player.update_delts(event)
+                        player.update_delts(event,dt=dt)
                     if event.key == pygame.K_k:
                         if not npc.is_talking and door_button.coll_check(player.rect.center) and not \
                                 door_button.is_open and knocked:
@@ -1137,7 +1139,7 @@ while running:
 
                 if event.type == pygame.KEYUP:
                     if not npc.is_talking:
-                        player.update_delts(event, down=False)
+                        player.update_delts(event, down=False,dt=dt)
                     if event.key == pygame.K_l:
                         next_button.set_released()
             if time.time() - start_time > 2:
@@ -1192,7 +1194,7 @@ while running:
                     door_button.set_released()
                 if event.type == pygame.KEYDOWN:
                     if not npc.is_talking:
-                        player.update_delts(event)
+                        player.update_delts(event,dt=dt)
                     if event.key == pygame.K_ESCAPE:
                         prev_screen = True
                         curr_screen = instruct_screen
@@ -1250,7 +1252,7 @@ while running:
 
                 if event.type == pygame.KEYUP:
                     if not npc.is_talking:
-                        player.update_delts(event, down=False)
+                        player.update_delts(event, down=False,dt=dt)
                     if event.key == pygame.K_l:
                         next_button.set_released()
             update_frame(player, npc, game_sprites, tool_sprites, core_surface, text_window, msg_texts,
@@ -1279,7 +1281,7 @@ while running:
                     legend_button.set_released()
                 if event.type == pygame.KEYDOWN:
                     if not npc.is_talking:
-                        player.update_delts(event)
+                        player.update_delts(event,dt=dt)
                     if event.key == pygame.K_ESCAPE:
                         prev_screen = True
                         curr_screen = instruct_screen
@@ -1292,7 +1294,7 @@ while running:
 
                 if event.type == pygame.KEYUP:
                     if not npc.is_talking:
-                        player.update_delts(event, down=False)
+                        player.update_delts(event, down=False,dt=dt)
                     if event.key == pygame.K_l:
                         next_button.set_released()
             update_frame(player, npc, game_sprites, tool_sprites, core_surface, text_window, msg_texts,
@@ -1363,7 +1365,7 @@ while running:
                     sandbox_approaches += 0.5
                 if event.type == pygame.KEYDOWN:
                     if not npc.is_talking:
-                        player.update_delts(event)
+                        player.update_delts(event,dt=dt)
                     if event.key == pygame.K_ESCAPE:
                         prev_screen = True
                         curr_screen = instruct_screen
@@ -1377,7 +1379,8 @@ while running:
                                 if door_button.is_open and \
                                         button.coll_check(player.rect.center, x_offset=25, y_offset=25):
                                     button.sound.play()
-                                    choice = button.tag
+                                    if button.tag:
+                                        choice = button.tag
                                     if choice:
                                         player.change_sprite('game_assets_f/player_aux/player_{}.png'.format(choice))
                         if legend_button in available_tools and legend_button.coll_check(player.rect.center):
@@ -1408,7 +1411,7 @@ while running:
 
                 if event.type == pygame.KEYUP:
                     if not npc.is_talking:
-                        player.update_delts(event, down=False)
+                        player.update_delts(event, down=False,dt=dt)
                     if event.key == pygame.K_l:
                         next_button.set_released()
                         sandbox_approaches += 0.5
@@ -1438,7 +1441,7 @@ while running:
                 else:
                     door_button.set_released()
                 if event.type == pygame.KEYDOWN:
-                    player.update_delts(event)
+                    player.update_delts(event,dt=dt)
                     if event.key == pygame.K_ESCAPE:
                         prev_screen = True
                         curr_screen = instruct_screen
@@ -1448,7 +1451,8 @@ while running:
                                 if door_button.is_open and button.coll_check(player.rect.center, x_offset=25,
                                                                              y_offset=25):
                                     button.sound.play()
-                                    choice = button.tag
+                                    if button.tag:
+                                        choice = button.tag
                                     if choice:
                                         player.change_sprite('game_assets_f/player_aux/player_{}.png'.format(choice))
                         if legend_button in available_tools and legend_button.coll_check(player.rect.center):
@@ -1486,7 +1490,7 @@ while running:
                                 perf_ts = time.time()
                                 enemy_title = textfont.render(curr_enemy.title, 1, (0, 0, 0))
                 if event.type == pygame.KEYUP:
-                    player.update_delts(event, down=False)
+                    player.update_delts(event, down=False,dt=dt)
 
             update_frame(player, None, game_sprites, tool_sprites, core_surface, text_window, msg_texts,
                          text_sprites, door_button)
@@ -1539,6 +1543,6 @@ while running:
                     pygame.quit()
                     sys.exit()
 
-    clock.tick()
-    # print(clock.get_fps())
+
+    #print(clock.get_fps())
     pygame.display.update()  # TODO bad for perfomance, should keep a list of objects(rects/sprites) that are updated and only update them
