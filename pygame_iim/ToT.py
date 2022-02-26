@@ -55,7 +55,7 @@ def prep_csv(acc, time, eng, tut, ans, NPC_type, player_id, score, replays):
     with open('game_assets_f/stats.csv', 'a', newline='') as file:
         fieldnames = ['Player', 'NPC', 'Answers', 'Accuracy', 'Time', 'Tutorial', 'Engagement', 'Score', 'Replays']
         writer = csv.DictWriter(file, fieldnames=fieldnames)
-        writer.writeheader()
+        # writer.writeheader()
         writer.writerow({'Player': player_id, 'NPC': NPC_type, 'Answers': ans, 'Accuracy': acc, 'Time': time,
                          'Tutorial': tut, 'Engagement': eng, 'Score': score, 'Replays': replays})
 
@@ -200,7 +200,7 @@ def npc_texter(npc_type, FRIEND):
 
         texts.append(
             [f"Well this hybrid is a special one!",
-             "Bet you probably already figured it out yourself, right super-{FRIEND}?",
+             f"Bet you probably already figured it out yourself, right super-{FRIEND}?",
              f"\nIf both parts of the hybrid don't share any preference, you can't give anything.",
              "It means they're messing with you. And if we can't TREAT them, we TRICK them!!"
              "\nGo take the water gun off the wall (top left) and give them a lesson."])
@@ -222,9 +222,11 @@ def npc_texter(npc_type, FRIEND):
         resps["knock"] = "Someone knocked on the door!! EXCITING!!\n Let's find out who. Press [K] to open the door."
         resps["yas"] = [f"Great Job {FRIEND}!!", f"AMAZING {FRIEND}!!!", f"Go {FRIEND}!!", "Excellent!!!"]
         resps["try"] = "OOPS, Not this one Pal. Try something else you can do this!!"
-        resps["hybrid"] = "What could we give both costumes if they were separated?\n if there's NO such thing, use the Trick Gun!"
+        resps[
+            "hybrid"] = "What could we give both costumes if they were separated?\n if there's NO such thing, use the Trick Gun!"
         resps["base"] = f"Look at the LEGEND super-{FRIEND}! You got this."
-        resps["ghost"] = f"Look at this ghost {FRIEND}! does it affect our visitor?\n remember regular ghosts will accept anything!"
+        resps[
+            "ghost"] = f"Look at this ghost {FRIEND}! does it affect our visitor?\n remember regular ghosts will accept anything!"
         resps["done"] = f"Alrighty I gotta go! attic zombie needs my help.\n Good luck mega-{FRIEND}! YOU GOT THIS!"
 
     else:
@@ -265,7 +267,7 @@ def npc_texter(npc_type, FRIEND):
                       "\nWhen you want to continue to the real game press [N].",
                       "During the real game, you'll need to work fast."
                       "\nYour score will be based on both time and accuracy.",
-                      "I'm still here until you press [N] to move to the next level." 
+                      "I'm still here until you press [N] to move to the next level."
                       "\nAfter that you're on your own."])
 
         resps = dict()
@@ -274,7 +276,8 @@ def npc_texter(npc_type, FRIEND):
         resps["knock"] = "Go to the door and press K to open it."
         resps["yas"] = ["Good", "Cool", "Okay"]
         resps["try"] = "This one's wrong. Try again..."
-        resps["hybrid"] = "Look, can you give both costume parts the same thing?\nOTHERWISE, you should know what to do."
+        resps[
+            "hybrid"] = "Look, can you give both costume parts the same thing?\nOTHERWISE, you should know what to do."
         resps["base"] = "You might see me as a LEGEND, but I'm not..."
         resps["ghost"] = "Listen, ghosts don't exist.\n I don't see a ghost there..."
         resps["done"] = "Attic zombie needs my help, Don't let me down..."
@@ -357,19 +360,18 @@ class Door(Button):
     def update(self):
         super().update()
         if self.is_open:
-            #print("here")
+            # print("here")
             self.current_sprite = len(self.sprites) - 1
             if not self.shifted:
                 self.rect.center = [self.rect.center[0] + 75, self.rect.center[1]]
             self.shifted = True
             self.image = self.sprites[int(self.current_sprite)]
         else:
-            self.current_sprite = max(self.current_sprite-1, 0)
+            self.current_sprite = max(self.current_sprite - 1, 0)
             if self.shifted:
                 self.rect.center = [self.rect.center[0] - 75, self.rect.center[1]]
                 self.image = self.sprites[self.current_sprite]
             self.shifted = False
-
 
 
 def mirror_img(f, game_size):
@@ -437,7 +439,7 @@ class Player(Animated_Sprite):
 
     def update_delts(self, event, down=True, dt=1):
         if down:
-            #dt = clock.tick(1000)
+            # dt = clock.tick(1000)
             if event.key == pygame.K_a:
                 self.deltas[0] -= self.player_speed * stretch[0] * dt
                 self.set_pressed(1)
@@ -493,11 +495,11 @@ class NPC(Animated_Sprite):
 
     def move_towards_coords(self, coords, offset=70, dt=1):
         self.dx, self.dy = coords[0] - self.rect.center[0], coords[1] - self.rect.center[1]
-        if abs(self.dx) >= offset*stretch[0] or abs(self.dy) >= offset*stretch[1]:
+        if abs(self.dx) >= offset * stretch[0] or abs(self.dy) >= offset * stretch[1]:
             dist = math.dist(coords, self.rect.center)
             self.dx, self.dy = self.dx / dist, self.dy / dist  # Normalize
-            self.deltas[0] += self.dx * self.move_speed*stretch[0]*dt
-            self.deltas[1] += self.dy * self.move_speed*stretch[1]*dt
+            self.deltas[0] += self.dx * self.move_speed * stretch[0] * dt
+            self.deltas[1] += self.dy * self.move_speed * stretch[1] * dt
         else:
             self.deltas = [0, 0]
         self.rect.center = list(map(add, list(self.rect.center), self.deltas))
@@ -530,7 +532,7 @@ class NPC(Animated_Sprite):
         # Can only respond once, looks for the first response condition
         resp_i = np.where(resp_conds)[0]
         resp_cond = resp_conds[resp_i[0]] if resp_i.size else False
-        if resp_cond or self.curr_response: # Response
+        if resp_cond or self.curr_response:  # Response
             if not self.is_talking:
                 if resp_cond:  # Npc should respond to something rn.
                     self.is_talking = True
@@ -736,7 +738,7 @@ def score(ans_lst, time_lst):
             score += (5.57 / tim) * 10
     acc = accuracy(ans_lst)
     avg_time = accuracy(time_lst)
-    return round(score*acc, 2) if acc <= 0.5 and avg_time <= 2.5 else round(score, 2)
+    return round(score * acc, 2) if acc <= 0.5 and avg_time <= 2.5 else round(score, 2)
 
 
 def adj_draw(msg_texts, core_surface, x=75, y=440):
@@ -750,7 +752,7 @@ def update_frame(player, npc, game_sprites, tool_sprites, core_surface, text_win
                  remainder=False):
     player.move_player()
     if npc:
-        npc.move_towards_coords(player.rect.center,dt=dt)
+        npc.move_towards_coords(player.rect.center, dt=dt)
         npc.rect.center = border_check(game_size, npc.rect.center, 32)
     player.rect.center = border_check(game_size, player.rect.center, 32)
     if door.is_open:
@@ -782,9 +784,9 @@ def tf(num, pos):
 
 ################################################# INIT STUFF ###########################################################
 pygame.init()
-#game_size = (1366, 748)
+# game_size = (1366, 748)
 game_size = (800, 600)
-#stretch = (1.7075, 1.24666)
+# stretch = (1.7075, 1.24666)
 stretch = (1, 1)
 core_surface, main_menu = game_setup(game_size, 'Tomidos project', 'game_assets_f/Tools/Candy/candy_i.png',
                                      'game_assets_f/Backgrounds/mm_bg.png')
@@ -832,13 +834,20 @@ single_opts = ["Princess", "Robot", "Farmer", "Cookie Monster", "Tooth", "Busine
 ghost_opts = []
 for g_comb in single_opts[:-1]:
     ghost_opts.append(g_comb + "-Ghost")
-Princess = Enemy("game_assets_f/game_enemies/Princess", tf(500, 0), tf(190, 1), (tf(215, 0), tf(162, 1)), "Princess", img_format='png')
-Robot = Enemy("game_assets_f/game_enemies/Robot", tf(500, 0), tf(190, 1), (tf(215, 0), tf(162, 1)), "Robot", img_format='png')
-Farmer = Enemy("game_assets_f/game_enemies/Farmer", tf(500, 0), tf(190, 1), (tf(215, 0), tf(162, 1)), "Farmer", img_format='png')
-Cookie = Enemy("game_assets_f/game_enemies/Cookie Monster", tf(500, 0), tf(190, 1), (tf(215, 0), tf(162, 1)), "Cookie Monster", img_format='png')
-Tooth = Enemy("game_assets_f/game_enemies/Tooth", tf(500, 0), tf(190, 1), (tf(215, 0), tf(162, 1)), "Tooth", img_format='png')
-Business = Enemy("game_assets_f/game_enemies/Businessman", tf(500, 0), tf(190, 1), (tf(215, 0), tf(162, 1)), "Businessman", img_format='png')
-Ghost = Enemy("game_assets_f/game_enemies/Ghost", tf(500, 0), tf(190, 1), (tf(215, 0), tf(162, 1)), "Ghost", img_format='png')
+Princess = Enemy("game_assets_f/game_enemies/Princess", tf(500, 0), tf(190, 1), (tf(215, 0), tf(162, 1)), "Princess",
+                 img_format='png')
+Robot = Enemy("game_assets_f/game_enemies/Robot", tf(500, 0), tf(190, 1), (tf(215, 0), tf(162, 1)), "Robot",
+              img_format='png')
+Farmer = Enemy("game_assets_f/game_enemies/Farmer", tf(500, 0), tf(190, 1), (tf(215, 0), tf(162, 1)), "Farmer",
+               img_format='png')
+Cookie = Enemy("game_assets_f/game_enemies/Cookie Monster", tf(500, 0), tf(190, 1), (tf(215, 0), tf(162, 1)),
+               "Cookie Monster", img_format='png')
+Tooth = Enemy("game_assets_f/game_enemies/Tooth", tf(500, 0), tf(190, 1), (tf(215, 0), tf(162, 1)), "Tooth",
+              img_format='png')
+Business = Enemy("game_assets_f/game_enemies/Businessman", tf(500, 0), tf(190, 1), (tf(215, 0), tf(162, 1)),
+                 "Businessman", img_format='png')
+Ghost = Enemy("game_assets_f/game_enemies/Ghost", tf(500, 0), tf(190, 1), (tf(215, 0), tf(162, 1)), "Ghost",
+              img_format='png')
 reg_enemies = [Princess, Robot, Farmer, Cookie, Tooth, Business, Ghost]
 hybrid_enemies = []
 for i, i_opt in enumerate(single_opts):
@@ -892,7 +901,8 @@ active = False
 
 # Game Screen: #########################################################################################################
 game_sprites = pygame.sprite.Group()
-player = Player('game_assets_f/player', 0, tf(370, 0), tf(480, 1), (tf(129, 0), tf(97, 1)), 2, img_format='PNG')
+player = Player('game_assets_f/player', 0, tf(370, 0), tf(480, 1), (tf(129, 0), tf(97, 1)), move_speed=2,
+                img_format='PNG')
 npc_types = ["Favorite", "Hyper", "Aloof"]
 random_type = randrange(0, 3)
 # random_type = 2
@@ -901,10 +911,12 @@ chosen_npc = npc_types[random_type]
 noopcie_pic = pygame.image.load('game_assets_f/Noopcie/{}/Noopcie_{}.png'.format(chosen_npc, random_type + 1))
 noopcie_pic = pygame.transform.smoothscale(noopcie_pic, [tf(214, 0), tf(162, 1)])
 FRIEND = "FRIEND"
-npc = NPC('game_assets_f/Noopcie/{}'.format(chosen_npc), 0, tf(608, 0), tf(84, 1), (tf(82, 0), tf(65, 1)), 2, loc_offset=100, img_format='PNG',
+npc = NPC('game_assets_f/Noopcie/{}'.format(chosen_npc), 0, tf(608, 0), tf(84, 1), (tf(82, 0), tf(65, 1)), move_speed=2,
+          loc_offset=100, img_format='PNG',
           type=chosen_npc, friend_name=FRIEND)
 sandbox_approaches = float(-1 * len(npc.texts[-1]) - 2) / 2 + 0.5
-msg_button = Msg_Button('game_assets_f/Buttons/msg_button', 1, tf(400, 0), tf(200, 1), (tf(100, 0), tf(75, 1)), npc=npc, y_offset=-60,
+msg_button = Msg_Button('game_assets_f/Buttons/msg_button', 1, tf(400, 0), tf(200, 1), (tf(100, 0), tf(75, 1)), npc=npc,
+                        y_offset=-60,
                         sound_path='game_assets_f/sounds/button_click.wav')
 text_sprites = pygame.sprite.Group()
 next_button = Button('game_assets_f/Buttons/next_button', 1, tf(720, 0), tf(540, 1), (tf(107, 0), tf(81, 1)),
@@ -922,9 +934,9 @@ tool_sprites = pygame.sprite.Group()
 candy_button = Button('game_assets_f/Tools/Candy', 1, tf(220, 0), tf(175, 1), (tf(112, 0), tf(81, 1)),
                       sound_path='game_assets_f/sounds/candy_sound.wav', tag='Candy')
 fruit_button = Button('game_assets_f/Tools/Fruit', 1, tf(610, 0), tf(475, 1), (tf(112, 0), tf(81, 1)),
-                      sound_path='game_assets_f/sounds/fruit_sound.wav', tag='Fruit',volume=0.7)
+                      sound_path='game_assets_f/sounds/fruit_sound.wav', tag='Fruit', volume=0.7)
 money_button = Button('game_assets_f/Tools/Money', 1, tf(100, 0), tf(395, 1), (tf(90, 0), tf(64, 1)),
-                      sound_path='game_assets_f/sounds/money_sound.wav', tag='Money',volume=0.6)
+                      sound_path='game_assets_f/sounds/money_sound.wav', tag='Money', volume=0.6)
 trick_button = Button('game_assets_f/Tools/Trick', 1, tf(120, 0), tf(95, 1), (tf(112, 0), tf(82, 1)),
                       sound_path='game_assets_f/sounds/Lesh_laugh.wav', tag='Trick', volume=0.3)
 
@@ -940,7 +952,7 @@ outcome = Outcome(X_sound_path='game_assets_f/sounds/wrong_sound.wav',
 # Finish Screen: #######################################################################################################
 finish_screen = fit_bg_dims(game_size, 'game_assets_f/Backgrounds/finish_bg.png')
 finish_buttons = pygame.sprite.Group()
-finish_button = Button('game_assets_f/Buttons/quit_button', 1, tf(400, 0), tf(400, 1), (tf(215, 0), tf(162, 1)),
+finish_button = Button('game_assets_f/Buttons/quit_button', 1, tf(400, 0), tf(400, 1), (tf(140, 0), tf(200, 1)),
                        sound_path='game_assets_f/sounds/button_click.wav')
 finish_buttons.add(finish_button)
 
@@ -964,7 +976,7 @@ legend_last_talk_action = 0
 visited_legend = False
 ################################################# GAME LOOP ############################################################
 while running:
-    #dt = clock.tick(60)
+    # dt = clock.tick(60)
     dt = 1
     core_surface.blit(curr_screen, (0, 0))
     # Main Menu Stuff
@@ -1198,7 +1210,7 @@ while running:
                     door_button.set_released()
                 if event.type == pygame.KEYDOWN:
                     if not npc.is_talking:
-                        player.update_delts(event,dt=dt)
+                        player.update_delts(event, dt=dt)
                     if event.key == pygame.K_ESCAPE:
                         prev_screen = True
                         curr_screen = instruct_screen
@@ -1226,6 +1238,7 @@ while running:
                                 if new_outcome.right:
                                     game_enemy.remove([curr_enemy])
                                     door_button.is_open = False
+                                    game_sprites.remove(msg_button)
                                     ts = time.time()
                                     tut_phase += 1
                                     knocked = False
@@ -1239,7 +1252,7 @@ while running:
                                         game_sprites.add(msg_button)
                                         available_tools.append(legend_button)
                                         break
-                                    #break
+                                    # break
                             elif not npc.is_talking and not door_button.is_open and time.time() - ts > 1:
                                 door_button.is_open = not door_button.is_open
                                 door_button.sound.play()
@@ -1256,7 +1269,7 @@ while running:
 
                 if event.type == pygame.KEYUP:
                     if not npc.is_talking:
-                        player.update_delts(event, down=False,dt=dt)
+                        player.update_delts(event, down=False, dt=dt)
                     if event.key == pygame.K_l:
                         next_button.set_released()
             update_frame(player, npc, game_sprites, tool_sprites, core_surface, text_window, msg_texts,
@@ -1285,7 +1298,7 @@ while running:
                     legend_button.set_released()
                 if event.type == pygame.KEYDOWN:
                     if not npc.is_talking:
-                        player.update_delts(event,dt=dt)
+                        player.update_delts(event, dt=dt)
                     if event.key == pygame.K_ESCAPE:
                         prev_screen = True
                         curr_screen = instruct_screen
@@ -1298,7 +1311,7 @@ while running:
 
                 if event.type == pygame.KEYUP:
                     if not npc.is_talking:
-                        player.update_delts(event, down=False,dt=dt)
+                        player.update_delts(event, down=False, dt=dt)
                     if event.key == pygame.K_l:
                         next_button.set_released()
             update_frame(player, npc, game_sprites, tool_sprites, core_surface, text_window, msg_texts,
@@ -1369,7 +1382,7 @@ while running:
                     sandbox_approaches += 0.5
                 if event.type == pygame.KEYDOWN:
                     if not npc.is_talking:
-                        player.update_delts(event,dt=dt)
+                        player.update_delts(event, dt=dt)
                     if event.key == pygame.K_ESCAPE:
                         prev_screen = True
                         curr_screen = instruct_screen
@@ -1415,7 +1428,7 @@ while running:
 
                 if event.type == pygame.KEYUP:
                     if not npc.is_talking:
-                        player.update_delts(event, down=False,dt=dt)
+                        player.update_delts(event, down=False, dt=dt)
                     if event.key == pygame.K_l:
                         next_button.set_released()
                         sandbox_approaches += 0.5
@@ -1445,7 +1458,7 @@ while running:
                 else:
                     door_button.set_released()
                 if event.type == pygame.KEYDOWN:
-                    player.update_delts(event,dt=dt)
+                    player.update_delts(event, dt=dt)
                     if event.key == pygame.K_ESCAPE:
                         prev_screen = True
                         curr_screen = instruct_screen
@@ -1494,7 +1507,7 @@ while running:
                                 perf_ts = time.time()
                                 enemy_title = textfont.render(curr_enemy.title, 1, (0, 0, 0))
                 if event.type == pygame.KEYUP:
-                    player.update_delts(event, down=False,dt=dt)
+                    player.update_delts(event, down=False, dt=dt)
 
             update_frame(player, None, game_sprites, tool_sprites, core_surface, text_window, msg_texts,
                          text_sprites, door_button)
@@ -1515,14 +1528,14 @@ while running:
 
     elif curr_screen == finish_screen:
         score_text = scorefont.render(str(curr_score), 1, (0, 0, 0))
-        core_surface.blit(score_text, (400, 250))
+        core_surface.blit(score_text, (365, 250))
         best_score_text = scorefont.render(str(best_score), 1, (0, 0, 0))
-        core_surface.blit(best_score_text, (400, 350))
+        core_surface.blit(best_score_text, (365, 300))
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-                pygame.quit()
-                sys.exit()
+            # if event.type == pygame.QUIT: #Only Quit by pressing L!
+            #     running = False
+            #     pygame.quit()
+            #     sys.exit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_k:
                     curr_screen = level_0
@@ -1539,14 +1552,27 @@ while running:
                     break
 
                 if event.key == pygame.K_l:
+                    finish_button.sound.play()
                     report_performance_mail(acc, times, int(sandbox_approaches), tut_accumulative,
                                             answered_correctly, chosen_npc, FRIEND, best_score, replays)
-                    finish_button.sound.play()
                     # time.sleep(0.2)
                     running = False
                     pygame.quit()
                     sys.exit()
 
+            if event.type == pygame.MOUSEBUTTONDOWN and finish_button.coll_check(event.pos):
+                finish_button.sound.play()
+                report_performance_mail(acc, times, int(sandbox_approaches), tut_accumulative,
+                                        answered_correctly, chosen_npc, FRIEND, best_score, replays)
+                # time.sleep(0.2)
+                running = False
+                pygame.quit()
+                sys.exit()
 
-    #print(clock.get_fps())
+
+        #finish_buttons.draw(core_surface)
+        finish_buttons.update()
+
+    clock.tick()
+    # print(clock.get_fps())
     pygame.display.update()  # TODO bad for perfomance, should keep a list of objects(rects/sprites) that are updated and only update them

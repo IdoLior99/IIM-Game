@@ -1,2 +1,5 @@
-changlog for beta ver3:
--- Added blocked-from-not-filling-name option in the name screen
+changlog for beta ver5:
+-- Players cannot close the game via [x] button @ finish screen, must press L now.
+-- L button @ finish game can now be pressed by M1, because people don't like to press L for some reason. 0
+-- Messages only pop up after a door opens; if someone progressed without messaging, the message disappears and only
+reappears after the door was opened again
