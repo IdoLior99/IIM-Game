@@ -10,7 +10,7 @@ import math
 import glob
 import keyring
 import sys
-
+import re
 """
 #################################################### EVALUATION CODE ###################################################
 """
@@ -1345,7 +1345,8 @@ while running:
                     last_talk_action = 0
                     npc.curr_response = None
                     if npc_flag:
-                        FRIEND = npc.friend_name.replace(' ', '_')
+                        npc.friend_name = npc.friend_name.replace(' ', '_')
+                        FRIEND = re.sub(r'\W+', 'i', npc.friend_name)
                         game_sprites.remove(npc, msg_button)
                         if door_button.is_open:
                             game_enemy.remove([curr_enemy])
